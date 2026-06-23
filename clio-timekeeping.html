@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clio Timekeeping — Activities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Inter','Helvetica Neue',Arial,sans-serif;color:#1e2635;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ═══ TOP NAV (h-56 · #0070e0 · buttons #0057b7) ═══ */
+.top-nav{height:56px;min-height:56px;background:#0070e0;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;color:#fff;gap:12px;flex-shrink:0;overflow:hidden}
+.tn-left{display:flex;gap:12px;align-items:center}
+.tn-group{display:flex;gap:8px;align-items:center}
+.tn-btn{background:#0057b7;height:40px;padding:0 16px;border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.14px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background 0.12s;white-space:nowrap}
+.tn-btn:hover{background:#004a9e}
+.tn-search{background:#0057b7;width:240px;padding:10px 16px 10px 12px;border-radius:6px;display:flex;gap:4px;align-items:center;color:#cceaff;font-size:14px;letter-spacing:-0.14px;cursor:text;flex-shrink:0}
+.tn-timer{display:flex;gap:1px}
+.tn-timer .tn-btn:first-child{border-radius:6px 0 0 6px}
+.tn-timer .tn-btn:last-child{border-radius:0 6px 6px 0;padding:0 12px}
+.tn-bell{position:relative;flex-shrink:0}
+.tn-bell button{background:#0057b7;width:40px;height:40px;border:none;border-radius:9999px;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.12s}
+.tn-bell button:hover{background:#004a9e}
+.tn-badge{position:absolute;top:-4px;left:24px;height:20px;min-width:20px;padding:0 6px;background:#d21033;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#fff}
+
+/* ═══ SHELL ═══ */
+.shell{display:flex;flex:1;min-height:0;height:calc(100vh - 56px)}
+
+/* ═══ SIDEBAR (224 · #001638) ═══ */
+.sidebar{width:224px;flex-shrink:0;background:#001638;color:#fff;display:flex;flex-direction:column;overflow:hidden}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:6px;cursor:pointer;background:#001638;transition:background 0.12s;text-decoration:none}
+.sb-item:hover{background:#002a5c}
+.sb-ico{width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-ico svg{width:13px;height:13px;color:#d1d9e0}
+.sb-label{flex:1;font-size:14px;line-height:20px;letter-spacing:-0.14px;font-weight:500;color:#e9ecf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-item.active{background:#003e93}
+.sb-item.active:hover{background:#003e93}
+.sb-item.active .sb-ico svg{color:#75c6ff}
+.sb-item.active .sb-label{font-weight:600;color:#fff}
+.sb-footer{padding:12px;display:flex;flex-direction:column;gap:8px}
+.sb-frow{display:flex;align-items:center;gap:8px;padding:2px 4px;border-radius:6px;cursor:pointer;transition:background 0.12s}
+.sb-frow:hover{background:#002a5c}
+.sb-fava{width:32px;height:32px;border-radius:9999px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-flabel{flex:1;font-size:14px;line-height:20px;letter-spacing:-0.14px;font-weight:500;color:#e9ecf0}
+.sb-firm{font-size:12px;line-height:16px;color:#8797a3}
+
+/* ═══ MAIN ═══ */
+.main{display:flex;flex-direction:column;flex:1;min-width:0;background:#f5f6f7}
+.main-head{flex-shrink:0;background:#fff;z-index:20}
+.page-title-row{height:54px;display:flex;align-items:center;gap:40px;padding:8px 16px;border-bottom:1px solid #ccd9e0}
+.page-title{flex:1;font-size:24px;font-weight:700;line-height:28px;color:#11151f}
+.head-actions{display:flex;gap:8px;align-items:center;position:relative}
+.gear-btn{height:40px;background:#fff;border:1px solid #a7b6c2;border-radius:6px;padding:0 16px;display:flex;align-items:center;gap:8px;cursor:pointer;color:#1e2635}
+.gear-btn:hover{background:#f9fafb}
+.btn-blue{background:#0070e0;height:40px;padding:0 16px;border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.14px;cursor:pointer;transition:background 0.12s;white-space:nowrap}
+.btn-blue:hover{background:#0060c0}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:8px;padding:0 12px;border-bottom:1px solid #d1d9e0;min-height:40px}
+.tab{height:40px;display:flex;align-items:center;padding:6px 4px;cursor:pointer}
+.tab span{font-size:14px;letter-spacing:-0.14px;color:#516578;padding:4px;transition:color 0.12s}
+.tab:hover span{color:#1e2635}
+.tab.active{border-bottom:2px solid #0069d1}
+.tab.active span{font-weight:700;color:#0069d1}
+
+/* ═══ CONTENT ═══ */
+.content{flex:1;overflow-y:auto;padding:24px 20px}
+.content-inner{display:flex;flex-direction:column;gap:24px}
+
+/* ═══ DATE NAV ═══ */
+.date-nav{display:flex;align-items:center;gap:10px}
+.date-arrows{display:flex;align-items:center;gap:1px}
+.rd-btn{width:28px;height:28px;border-radius:9999px;border:none;background:transparent;color:#1e2635;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.12s}
+.rd-btn:hover{background:#f3f4f6}
+.rd-btn svg{width:20px;height:20px}
+.rd-btn:disabled{opacity:.5;cursor:not-allowed}
+.rd-btn:disabled:hover{background:transparent}
+.date-label{font-size:24px;font-weight:700;color:#1e2635;letter-spacing:-0.12px}
+.cal-btn{height:28px;width:36px;background:#fff;border:1px solid #a7b6c2;border-radius:6px;color:#516578;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.12s}
+.cal-btn:hover{background:#f9fafb}
+.cal-btn svg{width:14px;height:14px}
+.cal-wrap{position:relative}
+.cal-btn.active{border-color:#0070e0;background:#f0f8ff}
+.cal-pop{position:absolute;top:calc(100% + 8px);left:0;width:280px;background:#fff;border:1px solid #d1d9e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:12px;z-index:400}
+.cal-pop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-nav{padding:4px;border:none;background:transparent;border-radius:4px;cursor:pointer;display:flex;color:#516578}
+.cal-nav:hover{background:#f3f4f6}
+.cal-nav:disabled{opacity:.3;cursor:not-allowed}
+.cal-nav:disabled:hover{background:transparent}
+.cal-month{font-size:14px;font-weight:600;color:#1e2635}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+.cal-dow span{text-align:center;font-size:11px;font-weight:500;color:#8797a3;padding:4px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day{height:32px;width:100%;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:6px;border:none;background:transparent;color:#1e2635;cursor:pointer;font-family:inherit}
+.cal-day:hover{background:#f3f4f6}
+.cal-day.sel{background:#0070e0;color:#fff;font-weight:600}
+.cal-day.sel:hover{background:#0070e0}
+.cal-day.dis{color:#c9d3db;cursor:not-allowed}
+.cal-day.dis:hover{background:transparent}
+.cal-foot{margin-top:8px;padding-top:8px;border-top:1px solid #e9ecf0}
+.cal-today{width:100%;text-align:center;font-size:13px;font-weight:500;color:#0070e0;background:none;border:none;padding:4px 0;border-radius:4px;cursor:pointer}
+.cal-today:hover{background:#f0f8ff;color:#0055a8}
+.dn-spacer{flex:1}
+.view-tl-btn{height:40px;padding:0 16px;background:#fff;border:1px solid #a7b6c2;border-radius:6px;color:#1e2635;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background 0.12s}
+.view-tl-btn:hover{background:#f9fafb}
+.view-tl-btn svg{width:16px;height:16px}
+.view-tl-btn span{font-size:14px;font-weight:600;letter-spacing:-0.14px}
+
+/* ═══ SUMMARY CARDS ═══ */
+.cards{display:flex;gap:16px}
+.card{flex:1;background:#fff;border:1px solid #a7b6c2;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:all 0.12s}
+.card:hover{border-color:#516578}
+.card.selected{background:#f0f8ff;border:2px solid #0069d1;padding:15px}
+.card-top{display:flex;align-items:center;gap:4px}
+.card-label{font-size:14px;font-weight:500;line-height:20px;letter-spacing:-0.14px;color:#11151f}
+.card-info{width:14px;height:14px;flex-shrink:0;cursor:help;display:inline-flex}
+.card-hours{font-size:24px;font-weight:700;line-height:28px;letter-spacing:-0.12px}
+.card-hours.black{color:#11151f}
+.card-hours.orange{color:#c24e00}
+.card-hours.green{color:#007e7c}
+.card-meta{font-size:12px;line-height:16px;color:#516578}
+.card-meta b{font-weight:500}
+
+/* ═══ TABLE ═══ */
+.table-wrap{display:flex;flex-direction:column;gap:0}
+.table-toolbar{display:flex;align-items:center;gap:12px;padding:0 0 10px}
+.tt-title{flex:1;font-size:14px;line-height:20px;color:#1e2635}
+.filters-btn{background:#fff;border:1px solid #a7b6c2;border-radius:6px;padding:4px 10px 4px 6px;display:flex;align-items:center;gap:4px;cursor:pointer}
+.filters-btn:hover{background:#f9fafb}
+.filters-btn span{font-size:14px;font-weight:600;color:#1e2635;line-height:20px}
+.filters-wrap{position:relative}
+.filters-btn.active{background:#f0f8ff;border-color:#0070e0}
+.filters-btn.active span{color:#0070e0}
+.fl-pop{position:absolute;right:0;top:calc(100% + 4px);width:320px;background:#fff;border:1px solid #d1d9e0;border-radius:4px;z-index:400;box-shadow:0 1px 3px rgba(60,78,98,0.08),0 8px 16px rgba(81,101,120,0.16);overflow:hidden}
+.fl-body{display:flex;flex-direction:column;gap:20px;padding:16px}
+.fl-field{display:flex;flex-direction:column;gap:4px}
+.fl-label{font-size:14px;font-weight:500;color:#1e2635;letter-spacing:-0.14px}
+.fl-control{position:relative;border:1px solid #8797a3;border-radius:6px;display:flex;align-items:center;overflow:hidden;background:#fff}
+.fl-control input{flex:1;min-width:0;padding:10px 12px;font-size:14px;color:#1e2635;border:none;outline:none;background:transparent;font-family:inherit;letter-spacing:-0.14px}
+.fl-control input::placeholder{color:#516578}
+.fl-select{flex:1;min-width:0;border:none;outline:none;background:transparent;padding:10px 12px;font-size:14px;color:#516578;font-family:inherit;letter-spacing:-0.14px;cursor:pointer;-webkit-appearance:none;appearance:none}
+.fl-chevron{width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#516578;background:none;border:none;cursor:pointer}
+.fl-chevron.bordered{border-left:1px solid #8797a3}
+.fl-foot{background:#f5f6f7;padding:12px 16px;display:flex;gap:8px}
+.fl-apply{background:#0069d1;height:40px;padding:0 16px;border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.14px;cursor:pointer}
+.fl-apply:hover{background:#0055a8}
+.fl-clear{background:#fff;height:40px;padding:0 16px;border:1px solid #a7b6c2;border-radius:6px;color:#1e2635;font-size:14px;font-weight:600;letter-spacing:-0.14px;cursor:pointer}
+.fl-clear:hover{background:#f9fafb}
+.fl-matter-wrap,.fl-cat-wrap{position:relative}
+.fl-matter-list{position:absolute;top:calc(100% + 4px);left:0;width:100%;background:#fff;border:1px solid #d1d9e0;border-radius:6px;max-height:200px;overflow-y:auto;z-index:10;box-shadow:0 1px 3px rgba(60,78,98,0.08),0 4px 8px rgba(81,101,120,0.16);display:none}
+.fl-opt{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #f3f4f6;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;font-family:inherit}
+.fl-opt:last-child{border-bottom:none}
+.fl-opt:hover{background:#f9fafb}
+.fl-opt-1{font-size:13px;color:#1e2635}
+.fl-opt-2{font-size:11px;color:#516578}
+.fl-opt-empty{padding:10px 12px;font-size:13px;color:#8797a3}
+.table-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;min-width:0}
+.thead{background:#f9fafb;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;height:36px;padding:0 16px;font-size:12px;font-weight:600;color:#1e2635}
+.col-check{width:40px;display:flex;justify-content:center;flex-shrink:0}
+.col-matter{width:160px;flex-shrink:0;padding-left:8px}
+.col-hours{width:64px;flex-shrink:0;text-align:center}
+.col-desc{flex:1;min-width:0;padding:0 16px}
+.col-bill{width:112px;flex-shrink:0;text-align:right;padding-right:16px}
+.col-ready{width:96px;flex-shrink:0;text-align:center}
+.col-act{width:80px;flex-shrink:0;text-align:center}
+input[type=checkbox]{width:16px;height:16px;border-radius:4px;border:1px solid #d1d9e0;accent-color:#0070e0;cursor:pointer}
+
+.row{display:flex;align-items:center;min-height:88px;padding:12px 16px;border-bottom:1px solid #e9ecf0;transition:background 0.1s;position:relative}
+.row:last-child{border-bottom:none}
+.row:hover{background:#f9fafb}
+.row.selected{box-shadow:inset 3px 0 0 #0069d1}
+.cell{display:flex;align-items:center}
+.cell-pad{position:relative;cursor:pointer;transition:background 0.1s}
+.cell-pad:hover{background:#ebf7ff}
+.c-matter{width:160px;flex-shrink:0;padding:12px 8px;margin:-12px 0;flex-direction:column;align-items:flex-start;justify-content:center}
+.matter-name{font-size:14px;font-weight:500;color:#1e2635;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:144px}
+.matter-ns{font-size:14px;color:#e05d00}
+.client-name{font-size:12px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:144px}
+.c-hours{width:64px;flex-shrink:0;justify-content:center;gap:2px}
+.hours-val{font-size:14px;color:#1e2635}
+.stepper{display:flex;flex-direction:column;color:#a7b6c2}
+.stepper button{border:none;background:transparent;padding:0;cursor:pointer;color:#a7b6c2;display:flex;height:11px;align-items:center}
+.stepper button:hover{color:#0069d1}
+.stepper svg{width:12px;height:12px}
+.c-desc{flex:1;min-width:0;padding:12px 16px;margin:-12px 0;flex-direction:column;align-items:flex-start;gap:8px}
+.desc-text{font-size:14px;color:#1e2635;line-height:1.4}
+.pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{padding:2px 10px;background:#e9ecf0;border:1px solid #d1d9e0;border-radius:9999px;font-size:12px;font-weight:500;color:#3c4e62;display:inline-flex;align-items:center;transition:background 0.12s}
+.pill:hover{background:#dfe4ea}
+.pill-x{display:none;margin-left:6px;padding:1px;border:none;background:none;cursor:pointer;color:#a7b6c2;border-radius:9999px;align-items:center;justify-content:center}
+.pill:hover .pill-x{display:inline-flex}
+.pill-x:hover{background:#c8d2da;color:#3c4e62}
+.add-cat{display:none;padding:2px 10px;border:1px dashed #93c5fd;border-radius:9999px;font-size:12px;color:#0069d1;cursor:pointer;align-items:center;gap:3px}
+.row.selected .add-cat{display:inline-flex}
+.c-bill{width:112px;flex-shrink:0;padding:12px 16px 12px 0;margin:-12px 0;flex-direction:column;align-items:flex-end;justify-content:center}
+.bill-amt{font-size:14px;font-weight:500;color:#1e2635}
+.bill-rate{font-size:12px;color:#6b7280}
+.bill-nb{font-size:12px;color:#6b7280}
+.c-ready{width:96px;flex-shrink:0;justify-content:center}
+.c-act{width:80px;flex-shrink:0;justify-content:center;gap:4px}
+
+/* edit pencil hover */
+.edit-pencil{position:absolute;top:4px;right:0;display:none;pointer-events:none}
+.cell-pad:hover .edit-pencil{display:block}
+.c-bill .edit-pencil{right:8px}
+
+/* ═══ TOGGLE ═══ */
+.toggle{display:inline-flex;align-items:center;height:24px;width:40px;border-radius:9999px;padding:2px;background:#516578;border:none;cursor:pointer;transition:background 0.2s;justify-content:flex-start}
+.toggle:hover{background:#3c4e62}
+.toggle.on{background:#0070e0;justify-content:flex-end}
+.toggle.on:hover{background:#0060c0}
+.toggle.disabled{opacity:.4;cursor:not-allowed}
+.toggle.disabled:hover{background:#516578}
+.toggle-knob{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:9999px;background:#fff;flex-shrink:0}
+.toggle-knob svg{width:14px;height:14px}
+.toggle .toggle-knob{color:#516578}
+.toggle.on .toggle-knob{color:#0070e0}
+
+/* ═══ ACTION BTNS ═══ */
+.act-btn{width:28px;height:28px;border-radius:9999px;border:none;background:transparent;color:#1e2635;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.12s}
+.act-btn:hover{background:rgba(135,151,163,0.3)}
+.act-btn.del:hover{background:rgba(210,16,51,0.12);color:#d21033}
+
+/* ═══ FOOTER BANNER ═══ */
+.footer-banner{flex-shrink:0;background:#fff;border-top:1px solid #e9ecf0;padding:14px 20px;display:flex;align-items:center;gap:16px}
+.fb-text{font-size:14px;color:#11151f}
+.fb-text b{font-weight:600}
+.fb-btn{background:#fff;border:1px solid #a7b6c2;color:#1e2635;font-size:14px;font-weight:600;padding:8px 16px;border-radius:6px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.fb-btn:hover{background:#f9fafb}
+
+/* ═══ RIGHT PANEL ═══ */
+.panel{position:fixed;top:56px;right:0;width:400px;height:calc(100vh - 56px);background:#fff;border-left:1px solid #e9ecf0;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.25s;z-index:100;box-shadow:-4px 0 16px rgba(0,0,0,0.06)}
+.panel.open{transform:translateX(0)}
+.panel-head{padding:16px 16px 0;border-bottom:1px solid #e9ecf0;flex-shrink:0;position:relative;z-index:20}
+.panel-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.panel-title{font-size:16px;font-weight:600;color:#1e2635;display:flex;align-items:center;gap:6px}
+.panel-close{width:28px;height:28px;border:none;background:transparent;color:#516578;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:9999px}
+.panel-close:hover{background:#f3f4f6}
+.panel-tabs{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:16px}
+.tl-pills{display:flex;gap:4px;padding:4px;border:1px solid #d1d9e0;border-radius:6px}
+.tl-pill{display:flex;gap:8px;align-items:center;padding:6px 16px;border-radius:4px;background:#fff;border:none;cursor:pointer;transition:background 0.12s}
+.tl-pill:hover{background:#f9fafb}
+.tl-pill.active{background:#cceaff}
+.tl-pill-label{font-size:14px;letter-spacing:-0.14px;color:#516578}
+.tl-pill.active .tl-pill-label{color:#003e93;font-weight:600}
+.tl-pill-count{display:flex;height:20px;min-width:20px;padding:0 6px;border-radius:9999px;align-items:center;justify-content:center;background:#cceaff}
+.tl-pill.active .tl-pill-count{background:#fff}
+.tl-pill-count span{font-size:12px;font-weight:500;line-height:16px;color:#0057b7}
+.tl-filter-btn{width:40px;height:40px;border:1px solid #a7b6c2;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#1e2635}
+.tl-filter-btn:hover{background:#f9fafb}
+.tl-filter-wrap{position:relative}
+.tl-filter-btn.active{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.tl-pop{position:absolute;right:0;top:calc(100% + 4px);width:280px;background:#fff;border:1px solid #d1d9e0;border-radius:4px;z-index:400;box-shadow:0 1px 3px rgba(60,78,98,0.08),0 8px 16px rgba(81,101,120,0.16);overflow:hidden}
+.tl-pop-body{display:flex;flex-direction:column;gap:20px;padding:16px}
+.tl-pop-field{display:flex;flex-direction:column;gap:4px}
+.tl-pop-label{font-size:14px;font-weight:500;color:#1e2635;line-height:20px;letter-spacing:-0.14px}
+.tl-pop-select{width:100%;height:40px;border:1px solid #8797a3;border-radius:6px;background:#fff;padding:0 36px 0 12px;font-size:14px;color:#1e2635;letter-spacing:-0.14px;cursor:pointer;font-family:inherit;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23516578' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.tl-pop-input{width:100%;height:40px;border:1px solid #8797a3;border-radius:6px;padding:0 12px;font-size:14px;color:#1e2635;letter-spacing:-0.14px;outline:none;font-family:inherit}
+.tl-pop-input::placeholder{color:#516578}
+.tl-pop-input:focus,.tl-pop-select:focus{border-color:#0069d1}
+.tl-pop-foot{background:#f5f6f7;display:flex;gap:8px;align-items:center;padding:12px 16px}
+.tl-pop-apply{height:40px;padding:0 16px;background:#0069d1;color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.14px;border:none;border-radius:6px;cursor:pointer}
+.tl-pop-apply:hover{background:#0055a8}
+.tl-pop-clear{height:40px;padding:0 16px;background:#fff;color:#1e2635;font-size:14px;font-weight:600;letter-spacing:-0.14px;border:1px solid #a7b6c2;border-radius:6px;cursor:pointer}
+.tl-pop-clear:hover{background:#f9fafb}
+.tl-empty{padding:48px 16px;text-align:center;color:#8797a3;font-size:13px}
+.tl-single-tab{font-size:14px;font-weight:600;color:#0069d1;border-bottom:2px solid #0069d1;padding-bottom:10px}
+.panel-body{flex:1;overflow-y:auto}
+.tl-day{display:flex;flex-direction:column;gap:24px;padding:10px 16px 16px}
+.tl-block{display:flex;gap:16px}
+.tl-rail{width:40px;flex-shrink:0;padding-top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;position:sticky;top:0;background:#fff;z-index:10}
+.tl-rail-time{font-size:12px;color:#1e2635}
+.tl-rail-check{width:18px;height:18px;border-radius:4px;background:#fff;border:1.5px solid #a7b6c2;cursor:pointer;flex-shrink:0}
+.tl-cards{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tl-card{border:1px solid #d1d9e0;border-radius:6px;padding:12px;display:flex;align-items:flex-start;gap:8px;background:#fff;cursor:pointer;transition:all 0.1s;position:relative}
+.tl-card:hover{background:#ebf7ff;border-color:#93c5fd}
+.tl-card.unacc{background:#f5f6f7;border-style:dashed;border-color:#a7b6c2}
+.tl-card.unacc:hover{background:#ebf7ff;border-style:solid;border-color:#93c5fd}
+.tl-card-icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.tl-card-icon svg{display:block}
+.tl-card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.tl-card-meta{display:flex;gap:6px;align-items:center;font-size:12px;color:#516578;line-height:16px;flex-wrap:wrap}
+.tl-badge2{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:9999px;font-size:11px;font-weight:500;line-height:1}
+.tl-badge2.acc{background:#b6f0e3;border:1px solid #80d9cb;color:#006968;opacity:0;transition:opacity 0.12s}
+.tl-card:hover .tl-badge2.acc{opacity:1}
+.tl-badge2.unacc{background:#e9ecf0;border:1px solid #d1d9e0;color:#3c4e62}
+.tl-card-desc{font-size:14px;font-weight:500;color:#1e2635;line-height:20px;letter-spacing:-0.14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tl-kebab{opacity:0;width:28px;height:28px;border-radius:9999px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1e2635;flex-shrink:0;transition:opacity 0.12s}
+.tl-card:hover .tl-kebab{opacity:1}
+.tl-kebab:hover{background:rgba(135,151,163,0.3)}
+.privacy{padding:12px 16px;font-size:11px;color:#8797a3;display:flex;align-items:center;gap:6px;border-top:1px solid #f3f4f6;flex-shrink:0}
+
+/* ═══ MODAL ═══ */
+.overlay{position:fixed;inset:0;background:rgba(17,21,31,0.45);z-index:300;display:none;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:8px;width:700px;height:600px;display:flex;flex-direction:column;overflow:hidden;position:relative;box-shadow:0px 1px 3px 0px rgba(60,78,98,0.08),0px 4px 8px 0px rgba(81,101,120,0.16)}
+.modal-head{height:64px;flex-shrink:0;padding:16px 12px 16px 24px;border-bottom:1px solid #d1d9e0;display:flex;align-items:center}
+.modal-title{flex:1;font-size:16px;font-weight:700;color:#11151f;letter-spacing:-0.08px;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-x{width:32px;height:32px;border:none;background:transparent;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-x:hover{background:#f3f4f6}
+.modal-body{flex:1;display:flex;min-height:0}
+.modal-side{width:164px;flex-shrink:0;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.m-tab{width:100%;text-align:left;border:none;background:transparent;border-radius:6px;padding:8px 10px;font-size:14px;line-height:20px;letter-spacing:-0.14px;color:#516578;font-weight:500;cursor:pointer}
+.m-tab:hover{background:#f9fafb}
+.m-tab.active{background:#cceaff;color:#003e93;font-weight:600}
+.modal-main{flex:1;min-width:0;border-left:1px solid #d1d9e0;overflow-y:auto}
+.s-sec{display:flex;flex-direction:column;gap:24px;align-items:flex-start;padding:24px 24px 32px}
+.s-sec+.s-sec{padding-top:0}
+.s-h{font-size:16px;font-weight:700;color:#1e2635;letter-spacing:-0.08px;line-height:20px}
+.s-p{font-size:14px;color:#1e2635;line-height:20px;letter-spacing:-0.14px}
+.s-note{font-size:12px;color:#1e2635;line-height:16px}
+.s-divider{width:100%;height:1px;background:#d1d9e0}
+.s-block{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%}
+.install-row{display:flex;gap:10px;margin-top:12px}
+.install-btn{background:#0069d1;height:40px;padding:0 16px;border:none;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:pointer;color:#fff;font-size:14px;font-weight:600;letter-spacing:-0.14px}
+.install-btn:hover{background:#005bb5}
+.cal-row{display:flex;gap:24px;align-items:center;width:100%}
+.cal-row .cal-col{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.cds-toggle{display:inline-flex;align-items:center;justify-content:flex-end;height:24px;width:40px;border-radius:9999px;padding:2px;background:#0069d1;border:none;cursor:pointer;flex-shrink:0}
+.cds-toggle .toggle-knob{color:#0069d1}
+.sync-row{display:flex;gap:20px;align-items:center;width:100%}
+.sync-ic{flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sync-name{flex:1;min-width:0;font-size:14px;font-weight:700;color:#1e2635;letter-spacing:-0.07px;line-height:16px}
+.sync-conn{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:600;color:#1e2635;letter-spacing:-0.14px;white-space:nowrap}
+.sync-iconbtn{height:28px;border:1px solid #a7b6c2;border-radius:6px;background:#fff;padding:0 10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.sync-iconbtn:hover{background:#f9fafb}
+.sync-connect{height:28px;border:1px solid #a7b6c2;border-radius:6px;background:#fff;padding:0 10px;font-size:14px;font-weight:600;color:#1e2635;letter-spacing:-0.14px;cursor:pointer;flex-shrink:0}
+.sync-connect:hover{background:#f9fafb}
+.writing-area{width:100%;min-height:90px;border:1px solid #a7b6c2;border-radius:6px;padding:10px;font-size:13px;font-family:inherit;color:#1e2635;resize:vertical}
+.writing-area:focus{outline:none;border-color:#0069d1}
+.add-ex{display:flex;align-items:center;gap:5px;font-size:13px;color:#0069d1;cursor:pointer;background:none;border:none;padding:0;margin-top:10px}
+.add-ex:hover{text-decoration:underline}
+
+/* ═══ DROPDOWN ═══ */
+.dropdown{position:fixed;background:#fff;border:1px solid #d1d9e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:400;min-width:240px;display:none;overflow:hidden}
+.dropdown.open{display:block}
+.dd-item{padding:10px 14px;font-size:14px;color:#1e2635;cursor:pointer;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.dd-item svg{color:#516578;flex-shrink:0;width:16px;height:16px}
+.dd-item:hover{background:#f0f8ff;color:#0069d1}
+.dd-item:hover svg{color:#0069d1}
+</style>
+</head>
+<body>
+
+<!-- ═══════ GOLDEN DEMO DATA ═══════ -->
+<script>
+/* ── Synthesized work week: each weekday is a distinct day of authentic Golden Demo entries.
+   Mon=1 … Fri=5; the pattern repeats every week. UTBMS A&L codes are LEDES-only and used
+   solely by the insurance matter (00006-Continental Crest); other matters carry no A&L codes. ── */
+const ADMIN = { matter:null, client:null, hours:0.3, description:"Morning administrative tasks — email triage, calendar review, and pre-bill queue management.", rate:250, billReady:null };
+const OFFLINE = { matter:null, client:null, hours:0.4, description:"Offline time — not captured by Clio Timekeeping.", nonBillable:true, billReady:null };
+const WEEK = {
+  1: [ // Monday — Family / Civil Litigation / Personal Injury intake
+    { matter:"00001-Harmony", client:"Carmen Harmony", hours:1.0, rate:350, billReady:false, description:"Legal research on parental alienation case law and evidentiary requirements for custody modification." },
+    { matter:"00001-Harmony", client:"Carmen Harmony", hours:0.5, rate:350, billReady:false, description:"Internal strategy discussion with associate regarding evidence collection for parental alienation claims." },
+    { matter:"00004-Ramsey", client:"Spencer Ramsey", hours:0.8, rate:350, billReady:false, description:"Reviewing initial client intake forms and documentation provided by Spencer Ramsey." },
+    { matter:"00004-Ramsey", client:"Spencer Ramsey", hours:1.2, rate:350, billReady:false, description:"Reviewing defendant's social media accounts for additional evidence of defamatory statements." },
+    { matter:"00009-Bradley", client:"Mason Bradley", hours:1.5, rate:350, billReady:false, description:"Client intake and consultation with Mason Bradley regarding T-bone accident and injuries." },
+    { matter:"00009-Bradley", client:"Mason Bradley", hours:1.0, rate:350, billReady:false, description:"Reviewing initial accident report, police narrative, and client's statement of events." },
+    { matter:"00017-Johnson", client:"Sarah Johnson", hours:1.25, rate:250, billReady:true, description:"Preliminary legal research on premises liability law and precedents related to unmarked retail spills (MegaStore slip-and-fall)." },
+    ADMIN,
+  ],
+  2: [ // Tuesday — Corporate / Commercial
+    { matter:"00002-Northbridge Industries", client:"Tobias Northbridge", hours:1.5, rate:250, billReady:false, description:"Initial client consultation and intake for Northbridge Industries shareholder dispute." },
+    { matter:"00002-Northbridge Industries", client:"Tobias Northbridge", hours:1.5, rate:250, billReady:false, description:"Legal research on minority shareholder rights and breaches of fiduciary duty under state law." },
+    { matter:"00005-Glenhaven Corp", client:"Hunter Mans", hours:2.0, rate:350, billReady:false, description:"Drafting initial sections of shareholder agreement, focusing on share transfer restrictions." },
+    { matter:"00003-Glenhaven Corp", client:"Hunter Mans", hours:1.0, rate:300, billReady:false, description:"Review of Glenhaven Corp.'s non-compete agreement and initial documents provided by client." },
+    { matter:"00016-Lone Star", client:"Ed Walters", hours:2.0, rate:350, billReady:true, description:"Conference call with seller's counsel to negotiate key representations and warranties for the Asset Purchase Agreement." },
+    ADMIN,
+  ],
+  3: [ // Wednesday — IP / Immigration / Real Estate
+    { matter:"00010-Atlas Athletic Co.", client:"Atlas Athletic Co.", hours:1.25, rate:450, billReady:true, description:"Drafting initial cease and desist letter to Noname Unlimited Shoe Company re: trade dress infringement." },
+    { matter:"00010-Atlas Athletic Co.", client:"Atlas Athletic Co.", hours:2.0, rate:450, billReady:false, description:"Legal research on 'Triple Band Mark' and 'Shell-Toe Classic' trade dress protection and infringement precedents." },
+    { matter:"00012-Troy PhD", client:"Troy PhD", hours:2.0, rate:300, billReady:false, description:"Draft initial versions of Form I-485, I-765, and I-131 based on client information and supporting documents." },
+    { matter:"00012-Troy PhD", client:"Troy PhD", hours:0.75, rate:300, billReady:false, description:"Client consultation via phone to discuss application strategy and outstanding document requirements." },
+    { matter:"00011-ABC", client:"Liam Dawson", hours:1.5, rate:350, billReady:false, description:"Review of draft purchase agreement, identifying key terms and potential negotiation points." },
+    { matter:"00011-ABC", client:"Liam Dawson", hours:0.6, rate:350, billReady:false, description:"Phone call with Liam Dawson to discuss agreement review and outline amendment requests." },
+    ADMIN,
+    OFFLINE,
+  ],
+  4: [ // Thursday — Criminal / Employment + Insurance (LEDES, UTBMS A&L codes)
+    { matter:"00007-Theodore", client:"Theo Theodore", hours:2.0, rate:350, billReady:false, description:"Legal research on the intent element for grand larceny and precedents for a mistaken-identity defense." },
+    { matter:"00007-Theodore", client:"Theo Theodore", hours:1.5, rate:350, billReady:false, description:"Analyzing surveillance footage produced in discovery, noting quality issues and identification discrepancies." },
+    { matter:"00008-Theodore", client:"Theo Theodore", hours:1.5, rate:350, billReady:false, description:"Review and analysis of Theo Theodore's employment contract and termination letter." },
+    { matter:"00006-Continental Crest Life Insurance", client:"Fontaine Jones", hours:1.0, rate:250, billReady:false, tags:["A104","L110"], description:"Review of initial medical records, police report, and client-provided incident details." },
+    { matter:"00006-Continental Crest Life Insurance", client:"Fontaine Jones", hours:0.75, rate:250, billReady:false, tags:["A102","L120"], description:"Researching traffic laws pertaining to rear-end collisions and precedent for whiplash/back-pain claims." },
+    { matter:"00006-Continental Crest Life Insurance", client:"Fontaine Jones", hours:2.0, rate:250, billReady:true, tags:["A103","L160"], description:"Drafting initial demand letter for client Fontaine Jones, outlining damages and liability arguments." },
+    ADMIN,
+  ],
+  5: [ // Friday — Wills & Estate / Divorce / Personal Injury
+    { matter:"00013-Sampson", client:"Howard Sampson", hours:1.5, rate:350, billReady:false, description:"Initial client consultation regarding intestate probate for the Howard Sampson Estate." },
+    { matter:"00013-Sampson", client:"Howard Sampson", hours:2.0, rate:350, billReady:true, description:"Drafted initial Petition for Probate and reviewed preliminary asset list." },
+    { matter:"00015-Sterling", client:"Elena Sterling", hours:2.0, rate:750, billReady:false, description:"Review of newly received discovery documents from opposing counsel, focusing on financial inconsistencies and offshore activity." },
+    { matter:"00015-Sterling", client:"Elena Sterling", hours:1.0, rate:750, billReady:false, description:"Legal research on international jurisdiction for asset recovery in high-net-worth divorce cases." },
+    { matter:"00014-Bradley", client:"Mason Bradley", hours:1.5, rate:300, billReady:false, description:"Initial consultation with Mason Bradley regarding slip-and-fall at Beachville SuperGrocers." },
+    ADMIN,
+  ],
+};
+
+/* ── Captured-activity generator: synthesizes a realistic, reconciled day from a day's entries.
+   Each entry's events sum (in minutes) to its hours; unaccounted noise interleaved; seeded per
+   weekday so each day is distinct but stable. ── */
+const NOISE = [
+  { icon:"chrome",  desc:"Chrome: NYTimes — Headlines",        durs:[2,3,1] },
+  { icon:"outlook", desc:"Outlook: Inbox notification",         durs:[0.5,0.25] },
+  { icon:"chrome",  desc:"Chrome: ESPN — Scores",               durs:[2,3] },
+  { icon:"chrome",  desc:"Chrome: LinkedIn",                    durs:[1,2] },
+  { icon:"chrome",  desc:"Chrome: Amazon.com",                  durs:[2,3] },
+  { icon:"outlook", desc:"Outlook: Re: Team lunch?",            durs:[1,2] },
+  { icon:"offline", desc:"Idle",                                durs:[1,2,3] },
+  { icon:"outlook", desc:"Outlook: Re: Happy hour Friday?",     durs:[1] },
+  { icon:"chrome",  desc:"Chrome: Weather",                     durs:[1] },
+  { icon:"outlook", desc:"Outlook: Personal email",             durs:[1,2] },
+];
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function fmtClock(min){ let h=Math.floor(min/60), m=min%60; const ap=h>=12?'pm':'am'; let hh=h%12; if(hh===0)hh=12; return hh+':'+String(m).padStart(2,'0')+ap; }
+function fmtDur(min){ return min<1 ? Math.round(min*60)+'s' : Math.round(min)+'m'; }
+function splitMins(total,n,rnd){ if(n<=1) return [total]; const parts=[]; let rem=total; for(let i=0;i<n-1;i++){ const avg=rem/(n-i); let v=Math.max(2,Math.round(avg*(0.6+rnd()*0.8))); v=Math.min(v, rem-2*(n-1-i)); if(v<2)v=2; parts.push(v); rem-=v; } parts.push(Math.max(2,rem)); return parts; }
+function activityMix(e){
+  const M=(e.matter||'Admin').replace(/^\d+-/,''); const F=M.replace(/[^A-Za-z0-9]+/g,'_').replace(/_+$/,'').slice(0,26); const C=e.client||'the client';
+  const d=(e.description||'').toLowerCase();
+  if(e.matter===null && !e.nonBillable) return [{icon:'outlook',d:'Outlook: Clearing inbox'},{icon:'outlook',d:'Outlook: Reviewing today’s calendar'},{icon:'clio',d:'Clio: Reviewing pre-bill queue'}];
+  if(/research|precedent|case law|statut|jurisdiction/.test(d)) return [{icon:'chrome',d:'Chrome: Westlaw — '+M+' research'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_CaseLaw.pdf'},{icon:'word',d:'Word: '+F+'_Research_Memo.docx'},{icon:'chrome',d:'Chrome: Google Scholar — '+M}];
+  if(/draft|letter|petition|agreement|motion|memo|forms?|i-485/.test(d)) return [{icon:'word',d:'Word: '+F+'_Draft.docx'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_Reference.pdf'},{icon:'word',d:'Word: '+F+'_Draft.docx (cont.)'},{icon:'outlook',d:'Outlook: Sending draft to '+C}];
+  if(/review|analy|evidence|discovery|footage|document|records/.test(d)) return [{icon:'adobe',d:'Adobe Acrobat: '+F+'_Documents.pdf'},{icon:'word',d:'Word: '+F+'_Review_Notes.docx'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_Exhibits.pdf'}];
+  if(/negotiat|court|closing|prepar|conference call/.test(d)) return [{icon:'word',d:'Word: '+F+'_Prep.docx'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_Filing.pdf'},{icon:'outlook',d:'Outlook: Scheduling with opposing counsel'},{icon:'offline',d:'Call with '+C}];
+  if(/strateg|internal/.test(d)) return [{icon:'outlook',d:'Outlook: Internal strategy thread — '+M},{icon:'word',d:'Word: '+F+'_Strategy.docx'},{icon:'clio',d:'Clio: Matter dashboard — '+M}];
+  if(/consult|intake|client|correspond|communicat|call|meeting/.test(d)) return [{icon:'outlook',d:'Outlook: Correspondence with '+C},{icon:'offline',d:'Call with '+C},{icon:'clio',d:'Clio: Logging notes — '+M},{icon:'outlook',d:'Outlook: Follow-up to '+C}];
+  return [{icon:'clio',d:'Clio: '+M+' matter'},{icon:'word',d:'Word: '+F+'.docx'},{icon:'outlook',d:'Outlook: '+M+' email'}];
+}
+function genActivities(dayEntries, seed){
+  const rnd=mulberry32((seed*2654435761)>>>0); const acc=[];
+  dayEntries.forEach(e=>{
+    const total=Math.round(e.hours*60);
+    if(e.nonBillable){ acc.push({mins:total, icon:'offline', desc:'Offline time', entryId:e.id}); return; }
+    const mix=activityMix(e); const n=Math.max(2, Math.min(12, Math.round(total/7)));
+    splitMins(total,n,rnd).forEach((m,i)=>{ const a=mix[i%mix.length]; acc.push({mins:m, icon:a.icon, desc:a.d, entryId:e.id}); });
+  });
+  const seq=acc.slice(); const noiseN=Math.round(acc.length*0.8);
+  for(let i=0;i<noiseN;i++){ const z=NOISE[Math.floor(rnd()*NOISE.length)]; const du=z.durs[Math.floor(rnd()*z.durs.length)]; seq.splice(Math.floor(rnd()*(seq.length+1)),0,{mins:du, icon:z.icon, desc:z.desc, entryId:null}); }
+  if(seq.length) seq.splice(Math.floor(seq.length*0.5),0,{mins:45, icon:'offline', desc:'Lunch', entryId:null});
+  let t=480; const out=[];
+  seq.forEach(ev=>{ if(rnd()<0.25) t+=Math.floor(rnd()*5); out.push({time:fmtClock(t), dur:fmtDur(ev.mins), icon:ev.icon, desc:ev.desc, entryId:ev.entryId}); t+=Math.max(1,Math.round(ev.mins)); });
+  return out;
+}
+function buildEntries(list){
+  return list.map((e,i)=>({
+    id:i+1, matter:e.matter||null, client:e.client||null, hours:e.hours, description:e.description,
+    tags:e.tags?e.tags.slice():[], rate:e.nonBillable?null:(e.rate||0),
+    billable:e.nonBillable?0:Math.round(e.hours*(e.rate||0)),
+    billReady:('billReady' in e)?e.billReady:false, nonBillable:!!e.nonBillable
+  }));
+}
+/* live state for the loaded day (set by loadDay) */
+let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
+
+</script>
+
+<!-- ═══════ GEAR DROPDOWN ═══════ -->
+<div class="dropdown" id="gearDropdown">
+  <div class="dd-item" onclick="openSettings()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    Clio Timekeeping settings
+  </div>
+  <div class="dd-item" onclick="closeDropdown()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 1 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+    Manage activity categories
+  </div>
+</div>
+
+<!-- ═══════ SETTINGS MODAL ═══════ -->
+<div class="overlay" id="settingsModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Clio Timekeeping settings">
+    <div class="modal-head">
+      <p class="modal-title">Clio Timekeeping settings</p>
+      <button class="modal-x" onclick="closeModal()" aria-label="Close">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M0 16C0 7.16 7.16 0 16 0C24.84 0 32 7.16 32 16C32 24.84 24.84 32 16 32C7.16 32 0 24.84 0 16Z" fill="#fff"/><path d="M16.02 17.99L12.31 21.7C12.03 21.98 11.7 22.11 11.31 22.11C10.92 22.11 10.59 21.98 10.31 21.7C10.03 21.42 9.9 21.09 9.9 20.71C9.9 20.33 10.03 20 10.31 19.72L14.02 15.99L10.31 12.28C10.03 12 9.9 11.67 9.9 11.29C9.9 10.91 10.03 10.58 10.31 10.3C10.58 10.02 10.9 9.89 11.29 9.89C11.68 9.89 12.01 10.02 12.29 10.3L16 14.01L19.69 10.3C19.97 10.02 20.3 9.89 20.69 9.89C21.08 9.89 21.41 10.02 21.69 10.3C21.97 10.58 22.1 10.91 22.1 11.3C22.1 11.69 21.97 12.02 21.69 12.3L17.98 16.01L21.69 19.72C21.97 20 22.1 20.33 22.1 20.72C22.1 21.11 21.97 21.43 21.69 21.7C21.42 21.98 21.1 22.11 20.71 22.11C20.32 22.11 19.99 21.98 19.73 21.7L16.02 17.99Z" fill="#1E2635"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-side">
+        <button class="m-tab active" data-tab="capturing" onclick="switchModalTab('capturing')">Capturing</button>
+        <button class="m-tab" data-tab="writing" onclick="switchModalTab('writing')">Writing</button>
+      </div>
+      <div class="modal-main" id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<nav class="top-nav">
+  <div class="tn-left">
+    <div class="tn-group">
+      <svg width="32" height="32" viewBox="62 63 108 109" fill="none" style="flex-shrink:0"><path d="M157.955 83.5521L168.44 68.7655L155.334 80.5948C145.504 69.9156 131.578 63.3438 116.013 63.3438C86.5231 63.3438 62.4395 87.4952 62.4395 117.233C62.4395 146.97 86.3593 171.122 116.013 171.122C145.504 171.122 169.587 146.97 169.587 117.233C169.751 104.418 165.327 92.7527 157.955 83.5521ZM153.368 134.977C153.368 145.82 144.684 154.692 133.871 154.692H98.483C87.67 154.692 78.9867 145.82 78.9867 134.977V99.3245C78.9867 88.481 87.67 79.609 98.483 79.609H133.871C139.769 79.609 145.176 82.2377 148.78 86.5094L115.849 115.918L93.568 100.803L109.624 132.019C109.624 132.184 109.788 132.348 109.951 132.512L110.115 132.677C110.279 132.841 110.443 133.169 110.607 133.334C110.771 133.498 110.934 133.662 111.098 133.827C113.228 135.634 115.849 136.291 118.471 135.634C118.962 135.47 119.29 135.305 119.782 135.141H119.945C120.273 134.977 120.765 134.812 121.092 134.484C121.256 134.484 121.256 134.319 121.42 134.319C121.584 134.155 121.748 134.155 121.911 133.991C122.075 133.827 122.075 133.827 122.239 133.662C122.239 133.662 122.403 133.662 122.403 133.498L122.567 133.334C122.731 133.005 123.058 132.841 123.222 132.512L151.893 92.2598C152.712 94.5599 153.368 97.0244 153.368 99.4888V134.977Z" fill="white"/></svg>
+      <button class="tn-btn">Clio Manage <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+    </div>
+    <div class="tn-group">
+      <div class="tn-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> Search Clio Law</div>
+      <button class="tn-btn">Recents <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+    </div>
+  </div>
+  <div class="tn-group">
+    <div class="tn-timer">
+      <button class="tn-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg><span class="tnum">00:00:00</span></button>
+      <button class="tn-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+    </div>
+    <button class="tn-btn">Create new <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="tn-bell">
+      <button aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></button>
+      <span class="tn-badge">2</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════ SHELL ═══════ -->
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="sb-nav">
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span class="sb-label">Dashboard</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span><span class="sb-label">Calendar</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span><span class="sb-label">Tasks</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg></span><span class="sb-label">Matters</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2v2"/><path d="M7 22v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><path d="M8 2v2"/><circle cx="12" cy="11" r="3"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></span><span class="sb-label">Contacts</span></a>
+      <a class="sb-item active"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="sb-label">Activities</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M8 2h8v4H8z"/></svg></span><span class="sb-label">Billing</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span><span class="sb-label">Online payments</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="22"/><line x1="10" x2="10" y1="18" y2="22"/><line x1="14" x2="14" y1="18" y2="22"/><line x1="18" x2="18" y1="18" y2="22"/><polygon points="3 7 12 2 21 7"/><line x1="3" x2="21" y1="13" y2="13"/></svg></span><span class="sb-label">Accounts</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="sb-label">Documents</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span class="sb-label">Communications</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span><span class="sb-label">Reports</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg></span><span class="sb-label">Integrations</span></a>
+      <a class="sb-item"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="sb-label">Settings</span></a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-frow">
+        <div class="sb-fava" style="background:#cceaff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0057b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>
+        <span class="sb-flabel">Resource center</span>
+      </div>
+      <div class="sb-frow">
+        <div class="sb-fava" style="background:#138df0;font-size:14px;font-weight:600;color:#fff">J</div>
+        <div style="flex:1;min-width:0"><div class="sb-flabel">John Doe</div><div class="sb-firm">Clio Law</div></div>
+      </div>
+      <div class="sb-frow" title="Collapse">
+        <div class="sb-fava" style="background:#e9ecf0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#516578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></div>
+        <span class="sb-flabel">Collapse</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-head">
+      <div class="page-title-row">
+        <p class="page-title">Activities</p>
+        <div class="head-actions">
+          <button class="gear-btn" id="gearBtn" onclick="toggleDropdown()" aria-label="Settings" aria-haspopup="true">
+            <svg width="13" height="20" viewBox="0 0 13.1956 20" fill="none"><path d="M13.1466 7.56641C13.256 7.8125 13.174 8.05859 12.9826 8.25L11.8068 9.31641C11.8341 9.53516 11.8341 9.78125 11.8341 10C11.8341 10.2461 11.8341 10.4922 11.8068 10.7109L12.9826 11.7773C13.174 11.9414 13.256 12.2148 13.1466 12.4609C13.0373 12.7891 12.9006 13.0898 12.7365 13.3906L12.5998 13.6094C12.4084 13.9102 12.217 14.2109 11.9982 14.457C11.8341 14.6758 11.5607 14.7305 11.3146 14.6484L9.81071 14.1836C9.4279 14.457 9.01774 14.6758 8.60758 14.8672L8.25211 16.4258C8.19743 16.6719 8.00602 16.8633 7.75993 16.918C7.37711 16.9727 6.9943 17 6.58415 17C6.20133 17 5.81852 16.9727 5.43571 16.918C5.18961 16.8633 4.99821 16.6719 4.94352 16.4258L4.58805 14.8672C4.15055 14.6758 3.76774 14.457 3.38493 14.1836L1.88102 14.6484C1.63493 14.7305 1.36149 14.6758 1.19743 14.4844C0.978677 14.2109 0.78727 13.9102 0.595864 13.6094L0.459145 13.3906C0.295083 13.0898 0.158364 12.7891 0.0489891 12.4609C-0.0603859 12.2148 0.0216454 11.9688 0.213052 11.7773L1.38883 10.7109C1.36149 10.4922 1.36149 10.2461 1.36149 10C1.36149 9.78125 1.36149 9.53516 1.38883 9.31641L0.213052 8.25C0.0216454 8.05859 -0.0603859 7.8125 0.0489891 7.56641C0.158364 7.23828 0.295083 6.9375 0.459145 6.63672L0.595864 6.41797C0.78727 6.11719 0.978677 5.81641 1.19743 5.54297C1.36149 5.35156 1.63493 5.29688 1.88102 5.37891L3.38493 5.84375C3.76774 5.57031 4.1779 5.32422 4.58805 5.16016L4.94352 3.60156C4.99821 3.35547 5.18961 3.16406 5.43571 3.10938C5.81852 3.05469 6.20133 3 6.61149 3C6.9943 3 7.37711 3.05469 7.75993 3.10938C8.00602 3.13672 8.19743 3.35547 8.25211 3.60156L8.60758 5.16016C9.04508 5.32422 9.4279 5.57031 9.81071 5.84375L11.3146 5.37891C11.5607 5.29688 11.8341 5.35156 11.9982 5.54297C12.217 5.81641 12.4084 6.11719 12.5998 6.41797L12.7365 6.63672C12.9006 6.9375 13.0373 7.23828 13.174 7.56641H13.1466ZM6.61149 12.1875C7.37711 12.1875 8.08805 11.7773 8.49821 11.0938C8.88102 10.4375 8.88102 9.58984 8.49821 8.90625C8.08805 8.25 7.37711 7.8125 6.61149 7.8125C5.81852 7.8125 5.10758 8.25 4.69743 8.90625C4.31461 9.58984 4.31461 10.4375 4.69743 11.0938C5.10758 11.7773 5.81852 12.1875 6.61149 12.1875Z" fill="#1E2635"/></svg>
+            <svg width="9" height="6" viewBox="0 0 8.745 5.27051" fill="none"><path d="M3.75727 5.00391L0.257268 1.50391C0.0111746 1.25781 -0.0708567 0.875 0.065862 0.546875C0.202581 0.21875 0.530706 0 0.886175 0H7.88617C8.24164 0 8.54242 0.21875 8.67914 0.546875C8.81586 0.875 8.73383 1.25781 8.48774 1.50391L4.98774 5.00391C4.65961 5.35938 4.08539 5.35938 3.75727 5.00391Z" fill="#1E2635"/></svg>
+          </button>
+          <button class="btn-blue">New time entry</button>
+          <button class="btn-blue">New expense</button>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab" onclick="switchTab(this)"><span>Firm activity entries</span></div>
+        <div class="tab active" onclick="switchTab(this)"><span>Your timekeeping</span></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-inner">
+
+        <!-- DATE NAV -->
+        <div class="date-nav">
+          <div class="date-arrows">
+            <button class="rd-btn" onclick="shiftDay(-1)" aria-label="Previous day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="rd-btn" onclick="shiftDay(1)" aria-label="Next day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <span class="date-label" id="dateLabel">Feb 9, 2026</span>
+          <div class="cal-wrap" id="calWrap"></div>
+          <div class="dn-spacer"></div>
+          <button class="view-tl-btn" onclick="openTimelinePanel()" title="View timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg><span>View timeline</span></button>
+        </div>
+
+        <!-- SUMMARY CARDS -->
+        <div class="cards">
+          <div class="card selected" id="card-all" onclick="selectCard('all')">
+            <div class="card-top"><span class="card-label">All entries</span></div>
+            <p class="card-hours black" id="all-hours">8.5h</p>
+            <p class="card-meta" id="all-meta"><b>Billable</b> $1,925.00 • 16 entries</p>
+          </div>
+          <div class="card" id="card-draft" onclick="selectCard('draft')">
+            <div class="card-top"><span class="card-label">Draft entries</span><span class="card-info" data-info title="Entries not yet marked bill-ready"></span></div>
+            <p class="card-hours orange" id="draft-hours">8.5h</p>
+            <p class="card-meta" id="draft-meta"><b>Billable</b> $1,925.00 • 16 entries</p>
+          </div>
+          <div class="card" id="card-billready" onclick="selectCard('billready')">
+            <div class="card-top"><span class="card-label">Bill-ready entries</span><span class="card-info" data-info title="Entries marked ready to bill"></span></div>
+            <p class="card-hours green" id="billready-hours">0.0h</p>
+            <p class="card-meta" id="billready-meta"><b>Billable</b> $0.00 • 0 entries</p>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <p class="tt-title" id="ttTitle">Feb 9, 2026 time entries</p>
+            <div class="filters-wrap" id="filtersWrap"></div>
+          </div>
+          <div class="table-card">
+            <div class="thead">
+              <div class="col-check"><input type="checkbox" aria-label="Select all"></div>
+              <div class="col-matter">Matter</div>
+              <div class="col-hours">Hours</div>
+              <div class="col-desc">Description</div>
+              <div class="col-bill">Billable</div>
+              <div class="col-ready">Bill-ready</div>
+              <div class="col-act">Actions</div>
+            </div>
+            <div id="tableBody"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER BANNER -->
+    <div class="footer-banner">
+      <p class="fb-text" id="fbText">There is <b>32m</b> of unaccounted time (<b>24 captured events</b>).</p>
+      <button class="fb-btn" onclick="openTimelinePanel('unaccounted')">See unaccounted events</button>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════ RIGHT PANEL ═══════ -->
+<aside class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-head-row">
+      <span class="panel-title" id="panelTitle">Timeline of the day</span>
+      <button class="panel-close" onclick="closePanel()" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="panel-tabs" id="panelTabs"></div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+  <div class="privacy" id="privacyNote" style="display:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Your events stay private regardless of entry status.</div>
+</aside>
+
+<script>
+/* ═══ SVG HELPERS ═══ */
+function svgLucide(p,s){return `<svg width="${s||14}" height="${s||14}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;}
+const ICON_CHEV_UP='<path d="m18 15-6-6-6 6"/>', ICON_CHEV_DOWN='<path d="m6 9 6 6 6-6"/>', ICON_PLUS='<path d="M5 12h14"/><path d="M12 5v14"/>';
+const INFO_SVG='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7.01 14C4.5 14 2.2 12.69 0.94 10.5C-0.31 8.34 -0.31 5.69 0.94 3.5C2.2 1.34 4.5 0 7.01 0C9.5 0 11.8 1.34 13.06 3.5C14.31 5.69 14.31 8.34 13.06 10.5C11.8 12.69 9.5 14 7.01 14ZM4.63 4.54C4.53 4.89 4.69 5.28 5.04 5.41C5.37 5.52 5.76 5.36 5.87 5L5.89 4.98C5.92 4.89 6 4.84 6.08 4.84H7.67C7.92 4.84 8.11 5 8.11 5.25C8.11 5.39 8.03 5.52 7.89 5.61L6.69 6.29C6.47 6.4 6.36 6.62 6.36 6.86V7.22C6.36 7.6 6.63 7.88 7.01 7.88C7.37 7.88 7.64 7.6 7.67 7.25L8.54 6.73C9.06 6.43 9.42 5.85 9.42 5.25C9.42 4.29 8.63 3.5 7.67 3.5H6.08C5.43 3.5 4.85 3.91 4.63 4.54ZM6.14 9.63C6.14 10.12 6.52 10.5 7.01 10.5C7.48 10.5 7.89 10.12 7.89 9.63C7.89 9.16 7.48 8.75 7.01 8.75C6.52 8.75 6.14 9.16 6.14 9.63Z" fill="#0070E0"/></svg>';
+const SEARCHPLUS_SVG='<svg width="14" height="14" viewBox="0 0 13.9932 14.0205" fill="none"><path d="M11.375 5.6875C11.375 6.945 10.965 8.121 10.281 9.051L13.727 12.523C14.082 12.852 14.082 13.426 13.727 13.754C13.398 14.109 12.824 14.109 12.496 13.754L9.023 10.281C8.094 10.992 6.918 11.375 5.688 11.375C2.543 11.375 0 8.832 0 5.688C0 2.57 2.543 0 5.688 0C8.805 0 11.375 2.57 11.375 5.688ZM5.031 8.094C5.031 8.477 5.305 8.75 5.688 8.75C6.043 8.75 6.344 8.477 6.344 8.094V6.344H8.094C8.449 6.344 8.75 6.07 8.75 5.688C8.75 5.332 8.449 5.031 8.094 5.031H6.344V3.281C6.344 2.926 6.043 2.625 5.688 2.625C5.305 2.625 5.031 2.926 5.031 3.281V5.031H3.281C2.898 5.031 2.625 5.332 2.625 5.688C2.625 6.07 2.898 6.344 3.281 6.344H5.031V8.094Z" fill="currentColor"/></svg>';
+const TRASH_SVG='<svg width="12.25" height="14" viewBox="0 0 12.25 14" fill="none"><path d="M3.69 0.49C3.83 0.19 4.13 0 4.46 0H7.77C8.09 0 8.39 0.19 8.53 0.49L8.75 0.88H11.38C11.84 0.88 12.25 1.29 12.25 1.75C12.25 2.24 11.84 2.63 11.38 2.63H0.88C0.38 2.63 0 2.24 0 1.75C0 1.29 0.38 0.88 0.88 0.88H3.5L3.69 0.49ZM11.38 3.5L10.77 12.77C10.75 13.48 10.17 14 9.46 14H2.76C2.05 14 1.48 13.48 1.45 12.77L0.88 3.5H11.38Z" fill="currentColor"/></svg>';
+const PENCIL_SVG='<svg class="edit-pencil" width="28" height="28" viewBox="0 0 34 34" fill="none"><path d="M3 16C3 8.27 9.27 2 17 2C24.73 2 31 8.27 31 16C31 23.73 24.73 30 17 30C9.27 30 3 23.73 3 16Z" fill="white" stroke="#e9ecf0"/><path d="M19.92 9.52C20.6 8.84 21.73 8.84 22.41 9.52L23.48 10.59C24.16 11.27 24.16 12.39 23.48 13.07L22.16 14.39L18.61 10.83L19.92 9.52ZM17.98 11.46L21.53 15.02L15.16 21.39C14.89 21.66 14.53 21.88 14.15 21.99L10.84 22.97C10.62 23.03 10.38 22.97 10.21 22.78C10.02 22.62 9.97 22.37 10.05 22.15L11.01 18.84C11.12 18.46 11.33 18.11 11.61 17.83L17.98 11.46Z" fill="#1E2635"/></svg>';
+
+/* ═══ STATE ═══ */
+let entries = [];
+let current = new Date(2026,1,9); // Mon Feb 9 2026
+let selectedRow=null, panelMode=null, tlTab='all';
+let tlFilterOpen=false, tlMinDur=0, tlKeyword='';
+let entriesFilterOpen=false, fMatter='', fBillable='all', fCategory='';
+function matchEntryFilter(e){
+  if(fMatter){ const hay=((e.matter||'')+' '+(e.client||'')).toLowerCase(); if(!hay.includes(fMatter.toLowerCase())) return false; }
+  if(fBillable==='billable' && (e.nonBillable || !e.billable)) return false;
+  if(fBillable==='nonbillable' && !e.nonBillable) return false;
+  if(fCategory){ const t=(e.tags||[]).join(' ').toLowerCase(); if(!t.includes(fCategory.toLowerCase())) return false; }
+  return true;
+}
+
+/* ═══ TABLE ═══ */
+function renderTable(){
+  const tb=document.getElementById('tableBody'); tb.innerHTML='';
+  if(!entries.length){ tb.innerHTML='<div style="padding:48px 16px;text-align:center;color:#8797a3;font-size:14px">No time entries for this day.</div>'; updateSummaryCards(); return; }
+  const list=entries.filter(matchEntryFilter);
+  if(!list.length){ tb.innerHTML='<div style="padding:40px 16px;text-align:center;color:#8797a3;font-size:13px">No entries match your filters.</div>'; updateSummaryCards(); return; }
+  list.forEach(e=>{
+    const isNS=!e.matter;
+    const row=document.createElement('div');
+    row.className='row'+(selectedRow===e.id?' selected':'');
+    row.onclick=(ev)=>{ if(ev.target.closest('.act-btn')||ev.target.closest('.toggle')||ev.target.closest('.stepper')||ev.target.closest('input')) return; selectRow(e.id); };
+
+    let tgClass='toggle', tgIcon, tgDisabled='';
+    if(e.billReady===null){ tgClass+=' disabled'; tgDisabled='disabled'; tgIcon='<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'; }
+    else if(e.billReady){ tgClass+=' on'; tgIcon='<polyline points="20 6 9 17 4 12"/>'; }
+    else { tgIcon='<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'; }
+    const tgKnob=`<span class="toggle-knob"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${tgIcon}</svg></span>`;
+
+    const tags=e.tags.map(t=>`<span class="pill">${t}<button class="pill-x" onclick="removeTag(${e.id},'${t}');event.stopPropagation()" aria-label="Remove tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></span>`).join('');
+    const addCat=`<span class="add-cat">${svgLucide(ICON_PLUS,11)} Category/code</span>`;
+    const bill = e.nonBillable
+      ? `<span class="bill-amt">$0.00</span><span class="bill-nb">Non-billable</span>`
+      : `<span class="bill-amt">$${e.billable.toFixed(2)}</span><span class="bill-rate">$${e.rate}.00/h</span>`;
+
+    row.innerHTML=`
+      <div class="col-check"><input type="checkbox" aria-label="Select entry" onclick="event.stopPropagation()"></div>
+      <div class="cell c-matter cell-pad" title="Edit matter">
+        ${isNS?'<span class="matter-ns">Not selected</span>':`<span class="matter-name">${e.matter}</span><span class="client-name">${e.client}</span>`}
+        ${PENCIL_SVG}
+      </div>
+      <div class="cell c-hours">
+        <span class="hours-val">${e.hours.toFixed(1)}</span>
+        <span class="stepper">
+          <button onclick="stepHours(${e.id},1);event.stopPropagation()" aria-label="Increase">${svgLucide(ICON_CHEV_UP,12)}</button>
+          <button onclick="stepHours(${e.id},-1);event.stopPropagation()" aria-label="Decrease">${svgLucide(ICON_CHEV_DOWN,12)}</button>
+        </span>
+      </div>
+      <div class="cell c-desc cell-pad" title="Edit description">
+        <p class="desc-text">${e.description}</p>
+        <div class="pills">${tags}${addCat}</div>
+        ${PENCIL_SVG}
+      </div>
+      <div class="cell c-bill cell-pad" title="Edit billable">${bill}${PENCIL_SVG}</div>
+      <div class="cell c-ready">
+        <button class="${tgClass}" ${tgDisabled} onclick="toggleBillReady(${e.id});event.stopPropagation()" aria-label="Mark as bill-ready">${tgKnob}</button>
+      </div>
+      <div class="cell c-act">
+        <button class="act-btn" onclick="openEntryPanel(${e.id});event.stopPropagation()" aria-label="View details" title="View details">${SEARCHPLUS_SVG}</button>
+        <button class="act-btn del" onclick="deleteEntry(${e.id});event.stopPropagation()" aria-label="Delete entry" title="Delete entry">${TRASH_SVG}</button>
+      </div>`;
+    tb.appendChild(row);
+  });
+  updateSummaryCards();
+}
+
+function selectRow(id){ selectedRow = selectedRow===id?null:id; renderTable(); }
+function stepHours(id,d){ const e=entries.find(x=>x.id===id); if(!e)return; e.hours=Math.max(0.1,Math.round((e.hours+d*0.1)*10)/10); if(!e.nonBillable&&e.rate) e.billable=Math.round(e.hours*e.rate); renderTable(); }
+function toggleBillReady(id){ const e=entries.find(x=>x.id===id); if(!e||e.billReady===null)return; e.billReady=!e.billReady; renderTable(); }
+function deleteEntry(id){ entries=entries.filter(e=>e.id!==id); if(selectedRow===id)selectedRow=null; if(panelMode==='entry')closePanel(); renderTable(); }
+function removeTag(id,tag){ const e=entries.find(x=>x.id===id); if(!e)return; e.tags=e.tags.filter(t=>t!==tag); renderTable(); }
+
+function updateSummaryCards(){
+  const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const th=entries.reduce((s,e)=>s+e.hours,0), tb=entries.reduce((s,e)=>s+(e.billable||0),0);
+  const br=entries.filter(e=>e.billReady===true), brh=br.reduce((s,e)=>s+e.hours,0), brb=br.reduce((s,e)=>s+(e.billable||0),0);
+  document.getElementById('all-hours').textContent=th.toFixed(1)+'h';
+  document.getElementById('all-meta').innerHTML=`<b>Billable</b> $${fmt(tb)} • ${entries.length} entries`;
+  document.getElementById('draft-hours').textContent=th.toFixed(1)+'h';
+  document.getElementById('draft-meta').innerHTML=`<b>Billable</b> $${fmt(tb)} • ${entries.length} entries`;
+  document.getElementById('billready-hours').textContent=brh.toFixed(1)+'h';
+  document.getElementById('billready-meta').innerHTML=`<b>Billable</b> $${fmt(brb)} • ${br.length} entries`;
+}
+
+function selectCard(w){ ['all','draft','billready'].forEach(k=>document.getElementById('card-'+k).classList.toggle('selected',k===w)); }
+function switchTab(el){ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+
+/* ═══ PANEL ═══ */
+function openPanel(){ document.getElementById('panel').classList.add('open'); }
+function closePanel(){ document.getElementById('panel').classList.remove('open'); document.getElementById('privacyNote').style.display='none'; panelMode=null; }
+/* ── App-logo icons (inline SVG, self-contained) ── */
+const IC_OUTLOOK='<svg width="18" height="16.8" viewBox="0 0 17.9926 16.803" fill="none"><path d="M17.99 8.82c0-.14-.07-.27-.19-.35l-6.24-3.7a1.04 1.04 0 0 0-1.05 0L4.27 8.47a.42.42 0 0 0-.14.57l.14.13 6.24 3.7c.32.19.73.19 1.05 0l6.24-3.7c.12-.07.2-.2.19-.35Z" fill="#0A2767"/><path d="M5.11 6.35h4.09v3.76H5.11V6.35Zm12.05-3.83V.8c.01-.43-.33-.79-.76-.8H5.78c-.43.01-.77.37-.76.8v1.72l6.28 1.68 5.86-1.68Z" fill="#0364B8"/><path d="M5.02 2.52h4.19v3.78H5.02V2.52Z" fill="#0078D4"/><path d="M13.39 2.52H9.21v3.78l4.18 3.78h3.77V6.3l-3.77-3.78Z" fill="#28A8EA"/><path d="M9.21 6.3h4.18v3.78H9.21V6.3Z" fill="#0078D4"/><path d="M9.21 10.08h4.18v3.78H9.21v-3.78Z" fill="#0364B8"/><path d="M5.11 10.11h4.1v3.43h-4.1v-3.43Z" fill="#14447D"/><path d="M13.39 10.08h3.77v3.78h-3.77v-3.78Z" fill="#0078D4"/><path d="M17.8 9.15l-6.24 3.52a1.05 1.05 0 0 1-1.05 0L4.27 9.15a.43.43 0 0 1-.14-.33v7.13c0 .47.39.85.87.85h12.08c.48 0 .87-.38.87-.85V8.82c0 .14-.07.26-.19.33Z" fill="#1490DF"/><path d="M9.62 4.55v8.12c0 .43-.34.77-.76.77H4.18V3.78h4.68c.12 0 .24.03.35.09.25.13.41.39.41.68Z" fill="#000" opacity=".2"/><path d="M.77 3.78h7.67c.42 0 .77.35.77.77v7.7c0 .43-.35.77-.77.77H.77c-.43 0-.77-.34-.77-.77v-7.7c0-.42.34-.77.77-.77Z" fill="#0A63C9"/><path d="M2.4 7.01a2.7 2.7 0 0 1 .87-.97 2.6 2.6 0 0 1 1.4-.35c.45-.01.89.1 1.28.33.37.22.67.54.86.93.2.42.31.89.3 1.36.01.5-.09.99-.3 1.43-.2.4-.5.74-.88.96-.41.24-.87.36-1.34.34-.46.02-.91-.1-1.31-.33a2.7 2.7 0 0 1-.87-.93 2.95 2.95 0 0 1-.3-1.35c-.01-.49.09-.98.29-1.42Zm.93 2.28c.1.26.27.48.49.64.23.16.5.24.77.23.3.01.59-.07.83-.24.22-.16.38-.38.47-.64.11-.29.16-.59.16-.89 0-.31-.05-.61-.15-.9a1.46 1.46 0 0 0-.46-.67c-.24-.18-.52-.27-.81-.25-.28-.01-.56.07-.79.23-.23.16-.4.38-.5.64a2.55 2.55 0 0 0 0 1.84Z" fill="#fff"/></svg>';
+const IC_WORD='<svg width="18" height="18" viewBox="0 0 32 32"><rect x="3" y="4" width="26" height="24" rx="2" fill="#fff"/><path d="M16 4h11a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H16z" fill="#dce6f5"/><path d="M18.5 11h7.5M18.5 15h7.5M18.5 19h7.5" stroke="#2B579A" stroke-width="1.3" stroke-linecap="round"/><path d="M3 6a2 2 0 0 1 2-2h11v24H5a2 2 0 0 1-2-2z" fill="#2B579A"/><path d="M6.3 10.2l1.35 8 1.85-5.6 1.85 5.6 1.35-8" fill="none" stroke="#fff" stroke-width="1.35" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+const IC_ADOBE='<svg width="18" height="18" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#EB1000"/><g transform="translate(6,6) scale(0.833)" fill="#fff"><path d="M14.66 0H24v24z"/><path d="M9.34 0H0v24z"/><path d="M12 8.84L17.93 24h-3.9l-1.77-4.5H7.94z"/></g></svg>';
+const IC_CHROME='<svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M12 7.8h7.6A10 10 0 0 0 3.3 6.4l3.4 5.9A5.2 5.2 0 0 1 12 7.8z" fill="#EA4335"/><path d="M12 16.2a4.2 4.2 0 0 1-3.6-2.1L4.7 7.9A10 10 0 0 0 10.7 22l3.4-5.9c-.7.1-1.4.1-2.1.1z" fill="#34A853"/><path d="M19.6 7.8H12a4.2 4.2 0 0 1 3.6 6.3l-3.4 5.9A10 10 0 0 0 19.6 7.8z" fill="#FBBC05"/><circle cx="12" cy="12" r="4.2" fill="#fff"/><circle cx="12" cy="12" r="3.4" fill="#4285F4"/></svg>';
+const IC_CLIO='<svg width="18" height="18" viewBox="0 0 233 235"><rect x="25" y="25" width="182" height="184" rx="42" fill="#0070E0"/><path d="M157.96 83.55L168.44 68.77L155.33 80.59C145.5 69.92 131.58 63.34 116.01 63.34C86.52 63.34 62.44 87.5 62.44 117.23C62.44 146.97 86.36 171.12 116.01 171.12C145.5 171.12 169.59 146.97 169.59 117.23C169.75 104.42 165.33 92.75 157.96 83.55ZM153.37 134.98C153.37 145.82 144.68 154.69 133.87 154.69H98.48C87.67 154.69 78.99 145.82 78.99 134.98V99.32C78.99 88.48 87.67 79.61 98.48 79.61H133.87C139.77 79.61 145.18 82.24 148.78 86.51L115.85 115.92L93.57 100.8L109.62 132.02C109.62 132.18 109.79 132.35 109.95 132.51L110.12 132.68C110.28 132.84 110.44 133.17 110.61 133.33C110.77 133.5 110.93 133.66 111.1 133.83C113.23 135.63 115.85 136.29 118.47 135.63C118.96 135.47 119.29 135.31 119.78 135.14H119.95C120.27 134.98 120.77 134.81 121.09 134.48C121.26 134.48 121.26 134.32 121.42 134.32C121.58 134.16 121.75 134.16 121.91 133.99L122.24 133.66L122.4 133.5L122.57 133.33C122.73 133.01 123.06 132.84 123.22 132.51L151.89 92.26C152.71 94.56 153.37 97.02 153.37 99.49V134.98Z" fill="#fff"/></svg>';
+const IC_OFFLINE='<svg width="11" height="14" viewBox="0 0 10.5 14"><path d="M.875 0H9.625C10.09 0 10.5.41 10.5.875C10.5 1.37 10.09 1.75 9.625 1.75V2.05C9.625 3.23 9.16 4.35 8.34 5.17L6.48 7L8.34 8.86C9.16 9.68 9.625 10.8 9.625 11.95V12.25C10.09 12.25 10.5 12.66 10.5 13.13C10.5 13.62 10.09 14 9.625 14H.875C.38 14 0 13.62 0 13.13C0 12.66.38 12.25.875 12.25V11.95C.875 10.8 1.31 9.68 2.13 8.86L3.99 7L2.13 5.17C1.31 4.35.875 3.23.875 2.05V1.75C.38 1.75 0 1.37 0 .875C0 .41.38 0 .875 0ZM2.625 2.05C2.625 2.76 2.9 3.42 3.39 3.91L5.25 5.77L7.08 3.91C7.57 3.42 7.875 2.76 7.875 2.05V1.75H2.625V2.05Z" fill="#1E2635"/></svg>';
+const TL_ICONS={outlook:IC_OUTLOOK, word:IC_WORD, adobe:IC_ADOBE, chrome:IC_CHROME, clio:IC_CLIO, offline:IC_OFFLINE};
+const KEBAB_SVG='<svg width="3" height="12" viewBox="0 0 3 12" fill="currentColor"><circle cx="1.5" cy="1.25" r="1.25"/><circle cx="1.5" cy="6" r="1.25"/><circle cx="1.5" cy="10.75" r="1.25"/></svg>';
+const FUNNEL_SVG='<svg width="14" height="20" viewBox="0 0 13.9932 20" fill="none"><path d="M0.09 4.5C0.28 4.12 0.67 3.87 1.1 3.87H12.92C13.33 3.87 13.71 4.12 13.9 4.5C14.06 4.89 14.01 5.35 13.74 5.68L8.76 11.78V15.25C8.76 15.6 8.57 15.9 8.27 16.04C7.97 16.18 7.61 16.15 7.34 15.96L5.59 14.65C5.37 14.48 5.26 14.24 5.26 13.94V11.78L0.26 5.68C-0.02 5.35 -0.07 4.89 0.09 4.5Z" fill="#1E2635"/></svg>';
+function appIcon(t){ return TL_ICONS[t]||IC_CLIO; }
+function hourLabel(time){ return time.match(/^(\d+)/)[1] + (time.includes('am')?'am':'pm'); }
+function tlCard(time,dur,icon,desc,accounted){
+  const badge = accounted ? '<span class="tl-badge2 acc">Accounted</span>' : '<span class="tl-badge2 unacc">Unaccounted</span>';
+  const d = dur ? `• ${dur}` : '';
+  return `<div class="tl-card ${accounted?'':'unacc'}"><div class="tl-card-icon">${appIcon(icon)}</div><div class="tl-card-body"><div class="tl-card-meta"><span>${time} ${d}</span>${badge}</div><div class="tl-card-desc">${desc}</div></div><button class="tl-kebab" onclick="event.stopPropagation()" aria-label="More">${KEBAB_SVG}</button></div>`;
+}
+function tlBlocks(items, isAccounted){
+  let html='<div class="tl-day">', cur=null, open=false;
+  items.forEach(ev=>{
+    const label=hourLabel(ev.time);
+    if(label!==cur){ if(open) html+='</div></div>'; html+=`<div class="tl-block"><div class="tl-rail"><span class="tl-rail-time">${label}</span><button class="tl-rail-check" aria-label="Select"></button></div><div class="tl-cards">`; cur=label; open=true; }
+    html+=tlCard(ev.time, ev.dur, ev.icon, ev.desc, isAccounted(ev));
+  });
+  if(open) html+='</div></div>';
+  return html+'</div>';
+}
+
+function openTimelinePanel(tab){
+  panelMode='timeline'; tlTab=tab||'all';
+  document.getElementById('panelTitle').innerHTML=`Timeline of the day <span class="card-info" title="Your events are private and only visible to you.">${INFO_SVG}</span>`;
+  document.getElementById('privacyNote').style.display='none';
+  renderTLTabs(); renderTLEvents(); openPanel();
+}
+function durToMin(d){ if(!d) return 0; const n=parseFloat(d)||0; if(d.includes('h')) return n*60; if(d.includes('s')) return n/60; return n; }
+function toggleTLFilter(e){ if(e) e.stopPropagation(); tlFilterOpen=!tlFilterOpen; renderTLTabs(); }
+function applyTLFilter(){ const s=document.getElementById('tlMinSel'), i=document.getElementById('tlKwInp'); tlMinDur=s?+s.value:0; tlKeyword=i?i.value.trim().toLowerCase():''; tlFilterOpen=false; renderTLTabs(); renderTLEvents(); }
+function clearTLFilter(){ tlMinDur=0; tlKeyword=''; const s=document.getElementById('tlMinSel'), i=document.getElementById('tlKwInp'); if(s)s.value='0'; if(i)i.value=''; renderTLEvents(); }
+function renderTLTabs(){
+  const a=ALL_TIMELINE.length, u=ALL_TIMELINE.filter(e=>e.unaccounted).length;
+  const active = tlFilterOpen || tlMinDur>0 || tlKeyword;
+  const opts=[[0,'All durations'],[1,'1 minute or more'],[5,'5 minutes or more'],[15,'15 minutes or more'],[30,'30 minutes or more'],[60,'1 hour or more']]
+    .map(o=>`<option value="${o[0]}" ${tlMinDur===o[0]?'selected':''}>${o[1]}</option>`).join('');
+  const pop = tlFilterOpen ? `<div class="tl-pop" onclick="event.stopPropagation()">
+      <div class="tl-pop-body">
+        <div class="tl-pop-field"><p class="tl-pop-label">Minimum duration</p><select class="tl-pop-select" id="tlMinSel">${opts}</select></div>
+        <div class="tl-pop-field"><p class="tl-pop-label">Keywords</p><input type="text" class="tl-pop-input" id="tlKwInp" placeholder="Find event" value="${tlKeyword.replace(/"/g,'&quot;')}"></div>
+      </div>
+      <div class="tl-pop-foot"><button class="tl-pop-apply" onclick="applyTLFilter()">Apply filters</button><button class="tl-pop-clear" onclick="clearTLFilter()">Clear filters</button></div>
+    </div>` : '';
+  document.getElementById('panelTabs').innerHTML=`
+    <div class="tl-pills">
+      <button class="tl-pill ${tlTab==='all'?'active':''}" onclick="tlTab='all';renderTLTabs();renderTLEvents()"><span class="tl-pill-label">All</span><span class="tl-pill-count"><span>${a}</span></span></button>
+      <button class="tl-pill ${tlTab==='unaccounted'?'active':''}" onclick="tlTab='unaccounted';renderTLTabs();renderTLEvents()" title="Events without a time entry"><span class="tl-pill-label">Unaccounted</span><span class="tl-pill-count"><span>${u}</span></span></button>
+    </div>
+    <div class="tl-filter-wrap">
+      <button class="tl-filter-btn ${active?'active':''}" onclick="toggleTLFilter(event)" aria-label="Filter">${FUNNEL_SVG}</button>
+      ${pop}
+    </div>`;
+}
+function renderTLEvents(){
+  let list = tlTab==='unaccounted'?ALL_TIMELINE.filter(e=>e.unaccounted):ALL_TIMELINE.slice();
+  if(tlMinDur>0) list=list.filter(e=>durToMin(e.dur)>=tlMinDur);
+  if(tlKeyword) list=list.filter(e=>e.desc.toLowerCase().includes(tlKeyword));
+  document.getElementById('panelBody').innerHTML = list.length ? tlBlocks(list, ev=>!ev.unaccounted) : '<div class="tl-empty">No events match your filters.</div>';
+}
+document.addEventListener('click',e=>{ if(tlFilterOpen && !e.target.closest('.tl-filter-wrap')){ tlFilterOpen=false; renderTLTabs(); } });
+function openEntryPanel(id){
+  panelMode='entry'; const e=entries.find(x=>x.id===id);
+  document.getElementById('panelTitle').textContent=`${e&&e.matter?e.matter:'Entry'} time entry details`;
+  document.getElementById('panelTabs').innerHTML='<div class="tl-single-tab">Accounted events</div>';
+  const events=ENTRY_DETAILS[id]||[];
+  document.getElementById('panelBody').innerHTML=tlBlocks(events, ev=>ev.accounted!==false);
+  document.getElementById('privacyNote').style.display='flex';
+  openPanel();
+}
+
+/* ═══ SETTINGS MODAL ═══ */
+function openSettings(){ closeDropdown(); document.getElementById('settingsModal').classList.add('open'); switchModalTab('capturing'); }
+function closeModal(){ document.getElementById('settingsModal').classList.remove('open'); }
+document.getElementById('settingsModal').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+function switchModalTab(tab){
+  document.querySelectorAll('.m-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  const c=document.getElementById('modalContent');
+  if(tab==='capturing'){
+    const winIcon='<svg width="20" height="20" viewBox="0 0 20 20"><path d="M0 0H9.58V9.58H0V0ZM10.42 0H20V9.58H10.42V0ZM0 10.42H9.58V20H0V10.42ZM10.42 10.42H20V20H10.42V10.42Z" fill="#fff"/></svg>';
+    const macIcon='<svg width="17" height="20" viewBox="0 0 17 20"><path d="M14.2133 10.5689C14.2043 8.9302 14.954 7.69336 16.4716 6.78248C15.6225 5.58137 14.3398 4.92054 12.6461 4.79105C11.0428 4.66603 9.29038 5.71532 8.64904 5.71532C7.97157 5.71532 6.41791 4.8357 5.19846 4.8357C2.67827 4.87589 0 6.82267 0 10.7832C0 11.9531 0.216791 13.1631 0.650372 14.4089C1.22848 16.0476 3.31509 20.0661 5.49203 19.9992C6.63018 19.9724 7.43411 19.1999 8.91552 19.1999C10.3518 19.1999 11.097 19.9992 12.3661 19.9992C14.5611 19.9679 16.449 16.3155 17 14.6723C14.0553 13.3015 14.2133 10.6537 14.2133 10.5689ZM11.657 3.2372C12.89 1.7905 12.7771 0.4733 12.741 0C11.6525 0.0625114 10.3924 0.732276 9.67428 1.55832C8.8839 2.44241 8.4187 3.53636 8.51807 4.76872C9.69687 4.85803 10.7718 4.2597 11.657 3.2372Z" fill="#fff"/></svg>';
+    const greenCheck='<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#018b76"/><path d="M4 7.2L6.2 9.4L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const unlink='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d21033" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m18.84 12.25 1.72-1.71a5.004 5.004 0 0 0-.12-7.07 5.006 5.006 0 0 0-6.95 0l-1.72 1.71"/><path d="m5.17 11.75-1.71 1.71a5.004 5.004 0 0 0 .12 7.07 5.006 5.006 0 0 0 6.95 0l1.71-1.71"/><line x1="8" x2="8" y1="2" y2="5"/><line x1="2" x2="5" y1="8" y2="8"/><line x1="16" x2="16" y1="19" y2="22"/><line x1="19" x2="22" y1="16" y2="16"/></svg>';
+    const oneDrive='<div style="width:18px;height:20px;position:relative"><svg style="position:absolute;left:0;top:0;width:9.8px;height:9px" viewBox="0 0 9.801 9.032" fill="none"><path d="M9.38 0H2.7C2.47 0 2.28 0.19 2.28 0.41V2.26L6.15 3.39L9.8 2.26V0.41C9.8 0.19 9.61 0 9.38 0Z" fill="#41A5EE"/><path d="M9.8 2.26H2.28V4.52L6.15 5.19L9.8 4.52V2.26Z" fill="#2B7CD3"/><path d="M2.28 4.52V6.77L5.93 7.23L9.8 6.77V4.52H2.28Z" fill="#185ABD"/><path d="M2.7 9.03H9.38C9.61 9.03 9.8 8.85 9.8 8.62V6.77H2.28V8.62C2.28 8.85 2.47 9.03 2.7 9.03Z" fill="#103F91"/><rect x="0" y="2.03" width="5.01" height="4.97" rx="0.4" fill="#1A5DBE"/><path d="M1.29 3.17l.4 1.88.45-1.88h.57l.46 1.85.4-1.85h.52l-.64 2.69h-.6l-.43-1.78-.41 1.78H1.41L.77 3.17z" fill="#fff"/></svg><svg style="position:absolute;left:2.82px;top:10.97px;width:9.78px;height:9px" viewBox="0 0 9.785 9.032" fill="none"><path d="M5.92 4.97L5.23 0C2.7 0.01 0.69 2 0.68 4.47V4.52L5.92 4.97Z" fill="#ED6C47"/><path d="M5.28 0H5.23V4.52L7.51 5.42L9.78 4.52V4.47C9.78 2 7.77 0.01 5.28 0Z" fill="#FF8F6B"/><path d="M9.78 4.52V4.57C9.78 7.03 7.77 9.03 5.28 9.03H5.18C2.7 9.03 0.69 7.03 0.68 4.57V4.52H9.78Z" fill="#D35230"/><rect x="0" y="2.03" width="5.01" height="4.97" rx="0.4" fill="#C5401E"/><path d="M2.55 3.14c.27-.02.54.06.76.22.18.16.28.4.26.64a.86.86 0 0 1-.13.48.8.8 0 0 1-.37.32 1.4 1.4 0 0 1-.56.08h-.52v.97h-.54V3.14h1.1zm-.56 1.35h.46c.15.01.29-.03.41-.12a.42.42 0 0 0 .14-.35c0-.3-.18-.45-.53-.45h-.48v.92z" fill="#fff"/></svg><svg style="position:absolute;left:8.31px;top:4.84px;width:9.82px;height:9px" viewBox="0 0 9.825 9.032" fill="none"><path d="M6.17 4.29L2.28 3.61V8.62C2.28 8.85 2.47 9.03 2.7 9.03H9.41C9.64 9.03 9.82 8.85 9.82 8.62V6.77L6.17 4.29Z" fill="#185C37"/><path d="M6.17 0H2.7C2.47 0 2.28 0.19 2.28 0.41V2.26L6.17 4.52L8.23 5.19L9.82 4.52V2.26L6.17 0Z" fill="#21A366"/><path d="M2.28 2.26H6.17V4.52H2.28V2.26Z" fill="#107C41"/><rect x="0" y="2.03" width="5.03" height="4.97" rx="0.4" fill="#117E43"/><path d="M1.3 5.86l.88-1.35-.81-1.34h.65l.44.86c.04.08.07.14.08.18.03-.06.06-.13.09-.19l.47-.85h.6l-.83 1.33.85 1.36h-.63l-.51-.94a.8.8 0 0 1-.06-.13.95.95 0 0 1-.07.13l-.52.94H1.3z" fill="#fff"/></svg></div>';
+    c.innerHTML=`
+      <div class="s-sec">
+        <div class="s-block">
+          <p class="s-h">Desktop timekeeping</p>
+          <p class="s-p" style="width:100%">Automatically capture billable time across all your applications by installing the desktop app on each of your computers.</p>
+          <div class="install-row">
+            <button class="install-btn">${winIcon}<span>Install for Windows</span></button>
+            <button class="install-btn">${macIcon}<span>Install for Mac</span></button>
+          </div>
+        </div>
+        <p class="s-note">To define which apps and websites should never be tracked, manage these rules within your Desktop app settings</p>
+      </div>
+      <div class="s-sec">
+        <div class="s-divider"></div>
+        <div class="cal-row">
+          <div class="cal-col"><p class="s-h">Calendar sync</p><p class="s-p" style="width:100%">Use your Clio calendar events to add context to tracked activity and suggest time entries</p></div>
+          <button class="cds-toggle" role="switch" aria-checked="true" aria-label="Calendar sync"><span class="toggle-knob"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></button>
+        </div>
+      </div>
+      <div class="s-sec">
+        <div class="s-divider"></div>
+        <div class="s-block"><p class="s-h">Mobile &amp; Cloud sync</p><p class="s-p" style="width:100%">Connect Outlook and OneDrive to capture billable activity when you're away from your computer.</p></div>
+        <div class="sync-row"><div class="sync-ic" style="width:21px;height:20px">${IC_OUTLOOK}</div><p class="sync-name">Microsoft Outlook</p><div class="sync-conn">${greenCheck}<span>Connected (name@email.com)</span></div><button class="sync-iconbtn" aria-label="Disconnect">${unlink}</button></div>
+        <div class="s-divider"></div>
+        <div class="sync-row"><div class="sync-ic">${oneDrive}</div><p class="sync-name">Microsoft OneDrive</p><button class="sync-connect">Connect</button></div>
+      </div>`;
+  } else {
+    c.innerHTML=`
+      <div class="s-sec"><div class="s-block">
+        <p class="s-p" style="width:100%">Add up to 5 examples of how you write time entry descriptions. Clio Timekeeping will use these as a guide to match your tone and style.</p>
+        <p style="font-size:14px;font-weight:700;color:#1e2635;letter-spacing:-0.07px;margin-top:8px">Description examples</p>
+        <textarea class="writing-area" id="exArea" placeholder="Example: Drafted and revised indemnification and limitation of liability provisions in master services agreement."></textarea>
+        <button class="add-ex" onclick="addExample()">${svgLucide(ICON_PLUS,12)} Add another example</button>
+      </div></div>`;
+  }
+}
+function addExample(){ const a=document.getElementById('exArea'); if(!a)return; const n=document.createElement('textarea'); n.className='writing-area'; n.style.marginTop='8px'; n.placeholder='Add another example...'; a.parentNode.insertBefore(n,a.parentNode.querySelector('.add-ex')); }
+
+/* ═══ DROPDOWN ═══ */
+const gd=document.getElementById('gearDropdown'), gb=document.getElementById('gearBtn');
+function toggleDropdown(){ const open=gd.classList.toggle('open'); if(open){ const r=gb.getBoundingClientRect(); gd.style.top=(r.bottom+6)+'px'; gd.style.left=r.left+'px'; } }
+function closeDropdown(){ gd.classList.remove('open'); }
+document.addEventListener('click',e=>{ if(!e.target.closest('#gearBtn')&&!e.target.closest('#gearDropdown')) closeDropdown(); });
+
+/* ═══ INFO ICON INJECT ═══ */
+document.querySelectorAll('.card-info[data-info]').forEach(el=>el.innerHTML=INFO_SVG);
+
+/* ═══ DATE ENGINE + CALENDAR ═══ */
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const TODAY_ANCHOR=new Date(2026,1,9); // demo "today" = Mon Feb 9 2026
+const CAL_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>';
+let calOpen=false, calY=2026, calM=1;
+
+function loadDay(date){
+  current=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  const wd=current.getDay();
+  // reset transient UI state on day change
+  selectedRow=null; calOpen=false; tlFilterOpen=false; entriesFilterOpen=false;
+  fMatter=''; fBillable='all'; fCategory=''; tlMinDur=0; tlKeyword=''; tlTab='all';
+  if(wd===0||wd===6){ entries=[]; ALL_TIMELINE=[]; ENTRY_DETAILS={}; MATTER_LIST=[]; }
+  else {
+    entries=buildEntries(WEEK[wd]);
+    ALL_TIMELINE=genActivities(entries, wd).map(a=>({...a, unaccounted:a.entryId==null}));
+    ENTRY_DETAILS=ALL_TIMELINE.reduce((m,a)=>{ if(a.entryId!=null){(m[a.entryId]=m[a.entryId]||[]).push({...a, accounted:true});} return m; },{});
+    MATTER_LIST=(function(){ const seen={}, out=[]; entries.forEach(e=>{ if(e.matter&&!seen[e.matter]){ seen[e.matter]=1; out.push({matter:e.matter, client:e.client||''}); } }); return out; })();
+  }
+  const lbl=MONTHS[current.getMonth()]+' '+current.getDate()+', '+current.getFullYear();
+  document.getElementById('dateLabel').textContent=lbl;
+  document.getElementById('ttTitle').textContent=lbl+' time entries';
+  if(document.getElementById('panel').classList.contains('open')) closePanel();
+  renderTable(); updateFooter(); renderCalendar(); renderFilters();
+}
+function shiftDay(delta){ const d=new Date(current); d.setDate(d.getDate()+delta); loadDay(d); }
+function updateFooter(){
+  const el=document.getElementById('fbText'); if(!el) return;
+  if(!ALL_TIMELINE.length){ el.innerHTML='No captured activity for this day.'; return; }
+  const un=ALL_TIMELINE.filter(e=>e.unaccounted);
+  const mins=Math.round(un.reduce((s,e)=>s+durToMin(e.dur),0));
+  el.innerHTML='There is <b>'+mins+'m</b> of unaccounted time (<b>'+ALL_TIMELINE.length+' captured events</b>).';
+}
+function renderCalendar(){
+  const wrap=document.getElementById('calWrap'); if(!wrap) return;
+  let pop='';
+  if(calOpen){
+    const first=new Date(calY,calM,1).getDay();
+    const dim=new Date(calY,calM+1,0).getDate();
+    let cells='';
+    for(let i=0;i<first;i++) cells+='<div></div>';
+    for(let d=1; d<=dim; d++){
+      const sel = current.getFullYear()===calY && current.getMonth()===calM && current.getDate()===d;
+      cells+=`<button class="cal-day ${sel?'sel':''}" onclick="selectDate(${calY},${calM},${d})">${d}</button>`;
+    }
+    pop = `<div class="cal-pop" onclick="event.stopPropagation()">
+      <div class="cal-pop-head">
+        <button class="cal-nav" onclick="calShiftMonth(-1)" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m15 18-6-6 6-6"/></svg></button>
+        <span class="cal-month">${MONTHS_FULL[calM]} ${calY}</span>
+        <button class="cal-nav" onclick="calShiftMonth(1)" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+      <div class="cal-dow"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+      <div class="cal-grid">${cells}</div>
+      <div class="cal-foot"><button class="cal-today" onclick="calToday()">Today</button></div>
+    </div>`;
+  }
+  wrap.innerHTML = `<button class="cal-btn ${calOpen?'active':''}" onclick="toggleCal(event)" aria-label="Pick date">${CAL_SVG}</button>${pop}`;
+}
+function toggleCal(e){ if(e) e.stopPropagation(); calOpen=!calOpen; if(calOpen){ calY=current.getFullYear(); calM=current.getMonth(); } renderCalendar(); }
+function calShiftMonth(d){ calM+=d; if(calM<0){calM=11;calY--;} if(calM>11){calM=0;calY++;} renderCalendar(); }
+function selectDate(y,m,d){ loadDay(new Date(y,m,d)); }
+function calToday(){ loadDay(new Date(TODAY_ANCHOR)); }
+document.addEventListener('click',e=>{ if(calOpen && !e.target.closest('.cal-wrap')){ calOpen=false; renderCalendar(); } });
+
+/* ═══ TABLE FILTERS ═══ */
+const FUNNEL_BTN='<svg width="14" height="20" viewBox="0 0 13.9932 20" fill="none"><path d="M0.0922852 4.5022C0.283691 4.11938 0.666504 3.87329 1.104 3.87329H12.9165C13.3267 3.87329 13.7095 4.11938 13.9009 4.5022C14.0649 4.88501 14.0103 5.34985 13.7368 5.67798L8.76025 11.7756V15.2483C8.76025 15.6038 8.56885 15.9045 8.26807 16.0413C7.96729 16.178 7.61182 16.1506 7.33838 15.9592L5.58838 14.6467C5.36963 14.4827 5.26025 14.2366 5.26025 13.9358V11.7756L0.256348 5.67798C-0.0170898 5.34985 -0.0717773 4.88501 0.0922852 4.5022Z" fill="currentColor"/></svg>';
+const CHEV_DOWN='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+function escAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
+/* MATTER_LIST is rebuilt per day by loadDay() */
+const CATEGORY_LIST=[
+  {code:'A100',name:'Activities'},{code:'A101',name:'Plan and prepare for'},{code:'A102',name:'Research'},{code:'A103',name:'Draft/revise'},{code:'A104',name:'Review/analyze'},{code:'A105',name:'Communicate (in firm)'},{code:'A106',name:'Communicate (with client)'},{code:'A107',name:'Communicate (opposing counsel)'},{code:'A108',name:'Communicate (other external)'},{code:'A109',name:'Appear for/attend'},{code:'A110',name:'Manage data/files'},{code:'A111',name:'Other'},
+  {code:'L100',name:'Case Assessment, Development and Administration'},{code:'L110',name:'Fact Investigation/Development'},{code:'L120',name:'Analysis/Strategy'},{code:'L130',name:'Experts/Consultants'},{code:'L140',name:'Document/File Management'},{code:'L150',name:'Budgeting'},{code:'L160',name:'Settlement/Non-Binding ADR'},{code:'L190',name:'Other Case Assessment'},
+  {code:'L200',name:'Pre-Trial Pleadings and Motions'},{code:'L210',name:'Pleadings'},{code:'L220',name:'Preliminary Injunctions/Provisional Remedies'},{code:'L230',name:'Court Mandated Conferences'},{code:'L240',name:'Dispositive Motions'},{code:'L250',name:'Other Written Motions and Submissions'},{code:'L260',name:'Class Action Certification and Notice'},
+  {code:'L300',name:'Discovery'},{code:'L310',name:'Written Discovery'},{code:'L320',name:'Document Production'},{code:'L330',name:'Depositions'},{code:'L340',name:'Expert Discovery'},{code:'L350',name:'Discovery Motions'},{code:'L390',name:'Other Discovery'},
+  {code:'L400',name:'Trial Preparation and Trial'},{code:'L410',name:'Fact Witnesses'},{code:'L420',name:'Expert Witnesses'},{code:'L430',name:'Written Motions and Submissions'},{code:'L440',name:'Other Trial Preparation and Support'},{code:'L450',name:'Trial and Hearing Attendance'},{code:'L460',name:'Post-Trial Motions and Submissions'},{code:'L470',name:'Enforcement'},
+  {code:'L500',name:'Appeal'},{code:'L510',name:'Appellate Motions and Submissions'},{code:'L520',name:'Appellate Briefs'},{code:'L530',name:'Oral Argument'}
+];
+function renderFilters(){
+  const w=document.getElementById('filtersWrap'); if(!w) return;
+  const active = entriesFilterOpen || fMatter || fCategory || fBillable!=='all';
+  let pop='';
+  if(entriesFilterOpen){
+    pop=`<div class="fl-pop">
+      <div class="fl-body">
+        <div class="fl-field"><label class="fl-label">Matter</label>
+          <div class="fl-matter-wrap">
+            <div class="fl-control"><input id="flMatter" type="text" autocomplete="off" placeholder="Find a matter by name or client" value="${escAttr(fMatter)}"><button type="button" class="fl-chevron bordered" id="flMatterChev">${CHEV_DOWN}</button></div>
+            <div class="fl-matter-list" id="flMatterList"></div>
+          </div></div>
+        <div class="fl-field"><label class="fl-label">Billable</label>
+          <div class="fl-control"><select id="flBillable" class="fl-select"><option value="all">All</option><option value="billable">Billable</option><option value="nonbillable">Non-billable</option></select><span class="fl-chevron" style="pointer-events:none">${CHEV_DOWN}</span></div></div>
+        <div class="fl-field"><label class="fl-label">Activity category / UTBMS code</label>
+          <div class="fl-cat-wrap">
+            <div class="fl-control"><input id="flCategory" type="text" autocomplete="off" placeholder="Find by code or category name" value="${escAttr(fCategory)}"><button type="button" class="fl-chevron bordered" id="flCatChev">${CHEV_DOWN}</button></div>
+            <div class="fl-matter-list" id="flCatList"></div>
+          </div></div>
+      </div>
+      <div class="fl-foot"><button class="fl-apply" onclick="applyEntryFilters()">Apply filters</button><button class="fl-clear" onclick="clearEntryFilters()">Clear filters</button></div>
+    </div>`;
+  }
+  w.innerHTML=`<button class="filters-btn ${active?'active':''}" onclick="toggleFilters(event)">${FUNNEL_BTN}<span>Filters</span></button>${pop}`;
+  if(entriesFilterOpen){ const s=document.getElementById('flBillable'); if(s) s.value=fBillable; wireMatterCombo(); wireCategoryCombo(); }
+}
+function wireCategoryCombo(){
+  const inp=document.getElementById('flCategory'), list=document.getElementById('flCatList'), chev=document.getElementById('flCatChev');
+  if(!inp||!list||!chev) return;
+  function paint(){
+    const q=inp.value.trim().toLowerCase();
+    const items=CATEGORY_LIST.filter(c=>!q || (c.code+' '+c.name).toLowerCase().includes(q));
+    list.innerHTML = items.length
+      ? items.map(c=>`<button type="button" class="fl-opt" data-v="${c.code}"><span class="fl-opt-1"><span style="font-weight:600">${c.code}</span> – ${c.name}</span></button>`).join('')
+      : '<div class="fl-opt-empty">No codes found</div>';
+    list.querySelectorAll('.fl-opt').forEach(b=>b.onclick=()=>{ inp.value=b.dataset.v; list.style.display='none'; });
+  }
+  inp.addEventListener('focus',()=>{ paint(); list.style.display='block'; });
+  inp.addEventListener('input',()=>{ paint(); list.style.display='block'; });
+  chev.addEventListener('click',e=>{ e.stopPropagation(); if(list.style.display==='block'){ list.style.display='none'; } else { paint(); list.style.display='block'; inp.focus(); } });
+}
+function wireMatterCombo(){
+  const inp=document.getElementById('flMatter'), list=document.getElementById('flMatterList'), chev=document.getElementById('flMatterChev');
+  if(!inp||!list||!chev) return;
+  function paint(){
+    const q=inp.value.trim().toLowerCase();
+    const items=MATTER_LIST.filter(m=>!q || (m.matter+' '+m.client).toLowerCase().includes(q));
+    list.innerHTML = items.length
+      ? items.map(m=>`<button type="button" class="fl-opt" data-m="${escAttr(m.matter)}"><span class="fl-opt-1"><span style="font-weight:500">${m.matter}</span></span><span class="fl-opt-2">${m.client}</span></button>`).join('')
+      : '<div class="fl-opt-empty">No matters found</div>';
+    list.querySelectorAll('.fl-opt').forEach(b=>b.onclick=()=>{ inp.value=b.dataset.m; list.style.display='none'; });
+  }
+  inp.addEventListener('focus',()=>{ paint(); list.style.display='block'; });
+  inp.addEventListener('input',()=>{ paint(); list.style.display='block'; });
+  chev.addEventListener('click',e=>{ e.stopPropagation(); if(list.style.display==='block'){ list.style.display='none'; } else { paint(); list.style.display='block'; inp.focus(); } });
+}
+function toggleFilters(e){ if(e) e.stopPropagation(); entriesFilterOpen=!entriesFilterOpen; renderFilters(); }
+function applyEntryFilters(){
+  const m=document.getElementById('flMatter'), b=document.getElementById('flBillable'), c=document.getElementById('flCategory');
+  fMatter=m?m.value.trim():''; fBillable=b?b.value:'all'; fCategory=c?c.value.trim():'';
+  entriesFilterOpen=false; renderFilters(); renderTable();
+}
+function clearEntryFilters(){ fMatter=''; fBillable='all'; fCategory=''; renderFilters(); renderTable(); }
+document.addEventListener('click',e=>{
+  if(entriesFilterOpen && !e.target.closest('.filters-wrap')){ entriesFilterOpen=false; renderFilters(); return; }
+  const l=document.getElementById('flMatterList');
+  if(l && l.style.display==='block' && !e.target.closest('.fl-matter-wrap')) l.style.display='none';
+  const cl=document.getElementById('flCatList');
+  if(cl && cl.style.display==='block' && !e.target.closest('.fl-cat-wrap')) cl.style.display='none';
+});
+
+/* ═══ INIT ═══ */
+loadDay(current);
+</script>
+</body>
+</html>
