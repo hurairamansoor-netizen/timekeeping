@@ -66,6 +66,8 @@ button{font-family:inherit}
 .tab{height:40px;display:flex;align-items:center;padding:6px 4px;cursor:pointer}
 .tab span{font-size:14px;letter-spacing:-0.14px;color:#516578;padding:4px;transition:color 0.12s}
 .tab:hover span{color:#1e2635}
+.tab-disabled{cursor:default}
+.tab-disabled:hover span{color:#516578}
 .tab.active{border-bottom:2px solid #0069d1}
 .tab.active span{font-weight:700;color:#0069d1}
 
@@ -129,8 +131,11 @@ button{font-family:inherit}
 
 /* ═══ TABLE ═══ */
 .table-wrap{display:flex;flex-direction:column;gap:0}
-.table-toolbar{display:flex;align-items:center;gap:12px;padding:0 0 10px}
+.table-toolbar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #f3f4f6;border-radius:8px 8px 0 0}
 .tt-title{flex:1;font-size:14px;line-height:20px;color:#1e2635}
+.bulk-inline{display:none;flex:1;align-items:center;justify-content:space-between;gap:8px}
+.table-toolbar.bulk-mode .tt-title,.table-toolbar.bulk-mode .filters-wrap{display:none}
+.table-toolbar.bulk-mode .bulk-inline{display:flex}
 .filters-btn{background:#fff;border:1px solid #a7b6c2;border-radius:6px;padding:4px 10px 4px 6px;display:flex;align-items:center;gap:4px;cursor:pointer}
 .filters-btn:hover{background:#f9fafb}
 .filters-btn span{font-size:14px;font-weight:600;color:#1e2635;line-height:20px}
@@ -160,7 +165,7 @@ button{font-family:inherit}
 .fl-opt-1{font-size:13px;color:#1e2635}
 .fl-opt-2{font-size:11px;color:#516578}
 .fl-opt-empty{padding:10px 12px;font-size:13px;color:#8797a3}
-.table-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;min-width:0}
+.table-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:visible;min-width:0}
 .thead{background:#f9fafb;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;height:36px;padding:0 16px;font-size:12px;font-weight:600;color:#1e2635}
 .col-check{width:40px;display:flex;justify-content:center;flex-shrink:0}
 .col-matter{width:160px;flex-shrink:0;padding-left:8px}
@@ -178,18 +183,19 @@ input[type=checkbox]{width:16px;height:16px;border-radius:4px;border:1px solid #
 .cell{display:flex;align-items:center}
 .cell-pad{position:relative;cursor:pointer;transition:background 0.1s}
 .cell-pad:hover{background:#ebf7ff}
-.c-matter{width:160px;flex-shrink:0;padding:12px 8px;margin:-12px 0;flex-direction:column;align-items:flex-start;justify-content:center}
+.c-matter{width:160px;flex-shrink:0;padding:12px 8px;margin:-12px 0;flex-direction:column;align-items:flex-start;justify-content:center;position:relative}
 .matter-name{font-size:14px;font-weight:500;color:#1e2635;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:144px}
 .matter-ns{font-size:14px;color:#e05d00}
 .client-name{font-size:12px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:144px}
 .c-hours{width:64px;flex-shrink:0;justify-content:center;gap:2px}
-.hours-val{font-size:14px;color:#1e2635}
+.hours-val{font-size:14px;font-weight:500;color:#1e2635}
 .stepper{display:flex;flex-direction:column;color:#a7b6c2}
 .stepper button{border:none;background:transparent;padding:0;cursor:pointer;color:#a7b6c2;display:flex;height:11px;align-items:center}
 .stepper button:hover{color:#0069d1}
 .stepper svg{width:12px;height:12px}
 .c-desc{flex:1;min-width:0;padding:12px 16px;margin:-12px 0;flex-direction:column;align-items:flex-start;gap:8px}
-.desc-text{font-size:14px;color:#1e2635;line-height:1.4}
+.desc-text{font-size:14px;color:#1e2635;line-height:1.4;outline:none;border-radius:4px;cursor:text;width:100%;display:block}
+.desc-text[contenteditable]:focus{box-shadow:inset 0 0 0 1px #0070e0;background:#fff;padding:3px 5px;margin:-3px -5px}
 .pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .pill{padding:2px 10px;background:#e9ecf0;border:1px solid #d1d9e0;border-radius:9999px;font-size:12px;font-weight:500;color:#3c4e62;display:inline-flex;align-items:center;transition:background 0.12s}
 .pill:hover{background:#dfe4ea}
@@ -198,6 +204,25 @@ input[type=checkbox]{width:16px;height:16px;border-radius:4px;border:1px solid #
 .pill-x:hover{background:#c8d2da;color:#3c4e62}
 .add-cat{display:none;padding:2px 10px;border:1px dashed #93c5fd;border-radius:9999px;font-size:12px;color:#0069d1;cursor:pointer;align-items:center;gap:3px}
 .row.selected .add-cat{display:inline-flex}
+.add-cat-wrap{position:relative;display:inline-flex}
+.li-pop{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,0.14);z-index:60;overflow:hidden;cursor:default}
+.li-pop.matter{width:300px;max-height:248px;overflow-y:auto}
+.li-pop.cat{width:320px}
+.li-opt{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #f3f4f6;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;font-family:inherit}
+.li-opt:last-child{border-bottom:none}
+.li-opt:hover{background:#f9fafb}
+.li-opt .l1{font-size:13px;color:#1e2635}
+.li-opt .l1 b{font-weight:500}
+.li-opt .l2{font-size:11px;color:#6b7280}
+.cat-search{padding:8px;border-bottom:1px solid #f3f4f6}
+.cat-search .box{display:flex;align-items:center;gap:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:6px 8px}
+.cat-search .box svg{color:#9ca3af;flex-shrink:0}
+.cat-search input{border:none;outline:none;background:none;font-size:13px;width:100%;color:#1e2635;font-family:inherit}
+.cat-list{max-height:200px;overflow-y:auto;padding:4px 0}
+.cat-opt{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border:none;background:none;cursor:pointer;font-family:inherit;text-align:left}
+.cat-opt:hover{background:#f9fafb}
+.cat-opt .code{font-size:14px;font-weight:500;color:#1e2635}
+.cat-opt .name{font-size:12px;color:#6b7280;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .c-bill{width:112px;flex-shrink:0;padding:12px 16px 12px 0;margin:-12px 0;flex-direction:column;align-items:flex-end;justify-content:center}
 .bill-amt{font-size:14px;font-weight:500;color:#1e2635}
 .bill-rate{font-size:12px;color:#6b7280}
@@ -228,11 +253,22 @@ input[type=checkbox]{width:16px;height:16px;border-radius:4px;border:1px solid #
 .act-btn.del:hover{background:rgba(210,16,51,0.12);color:#d21033}
 
 /* ═══ FOOTER BANNER ═══ */
-.footer-banner{flex-shrink:0;background:#fff;border-top:1px solid #e9ecf0;padding:14px 20px;display:flex;align-items:center;gap:16px}
+.footer-banner{flex-shrink:0;background:#f5f6f7;border-top:1px solid #e5e7eb;padding:12px 16px;display:flex;align-items:center;justify-content:flex-end}
+.fb-group{display:flex;align-items:center;gap:16px}
 .fb-text{font-size:14px;color:#11151f}
 .fb-text b{font-weight:600}
 .fb-btn{background:#fff;border:1px solid #a7b6c2;color:#1e2635;font-size:14px;font-weight:600;padding:8px 16px;border-radius:6px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 .fb-btn:hover{background:#f9fafb}
+/* bulk-selection toolbar */
+.bulk-left{display:flex;align-items:center;gap:8px}
+.bulk-btn{height:28px;display:inline-flex;align-items:center;gap:8px;padding:0 10px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:-0.14px;cursor:pointer;border:none}
+.bulk-btn.ghost{background:#fff;border:1px solid #a7b6c2;color:#1e2635;font-weight:500}
+.bulk-btn.ghost:hover{background:#f9fafb}
+.bulk-btn.primary{background:#0069d1;color:#fff}
+.bulk-btn.primary:hover{background:#0055a8}
+.bulk-btn.danger{background:#d21033;color:#fff}
+.bulk-btn.danger:hover{background:#b50d2b}
+.bulk-btn svg{width:14px;height:auto;flex-shrink:0}
 
 /* ═══ RIGHT PANEL ═══ */
 .panel{position:fixed;top:56px;right:0;width:400px;height:calc(100vh - 56px);background:#fff;border-left:1px solid #e9ecf0;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.25s;z-index:100;box-shadow:-4px 0 16px rgba(0,0,0,0.06)}
@@ -304,6 +340,33 @@ input[type=checkbox]{width:16px;height:16px;border-radius:4px;border:1px solid #
 .modal-title{flex:1;font-size:16px;font-weight:700;color:#11151f;letter-spacing:-0.08px;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .modal-x{width:32px;height:32px;border:none;background:transparent;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .modal-x:hover{background:#f3f4f6}
+/* merge modal */
+.merge-modal{background:#fff;border:1px solid #d1d9e0;border-radius:8px;width:600px;max-width:90vw;display:flex;flex-direction:column;overflow:hidden;box-shadow:0px 1px 3px 0px rgba(60,78,98,0.08),0px 4px 8px 0px rgba(81,101,120,0.16)}
+.mm-head{display:flex;align-items:center;justify-content:space-between;padding:16px 12px 16px 24px;border-bottom:1px solid #d1d9e0}
+.mm-title{font-size:16px;font-weight:700;color:#11151f;letter-spacing:-0.08px;line-height:20px}
+.mm-body{padding:20px 24px;display:flex;flex-direction:column;gap:20px}
+.mm-text{font-size:14px;color:#1e2635;letter-spacing:-0.14px;line-height:20px}
+.mm-text b{font-weight:700}
+.mm-field{display:flex;flex-direction:column;gap:4px}
+.mm-label{font-size:14px;font-weight:500;color:#1e2635;letter-spacing:-0.14px;line-height:20px}
+.mm-label-row{display:flex;align-items:center;gap:2px}
+.mm-select-wrap{position:relative}
+.mm-select{width:100%;height:40px;-webkit-appearance:none;appearance:none;border:1px solid #8797a3;border-radius:6px;background:#fff;padding:0 44px 0 12px;font-family:inherit;font-size:14px;color:#1e2635;letter-spacing:-0.14px;cursor:pointer}
+.mm-select.placeholder{color:#516578}
+.mm-select:hover{border-color:#6b7d8d}
+.mm-select-chev{position:absolute;top:0;right:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-left:1px solid #8797a3;pointer-events:none;color:#516578}
+.mm-rate-row{display:flex;align-items:center;gap:10px}
+.mm-rate{display:flex;align-items:center;border:1px solid #8797a3;border-radius:6px;overflow:hidden;width:330px}
+.mm-rate input{flex:1;border:none;outline:none;padding:10px 12px;font-family:inherit;font-size:14px;color:#1e2635;letter-spacing:-0.14px}
+.mm-rate-suffix{width:58px;height:40px;display:flex;align-items:center;justify-content:center;border-left:1px solid #8797a3;font-size:14px;color:#516578;letter-spacing:-0.14px;flex-shrink:0}
+.mm-rate-default{font-size:14px;color:#1e2635;letter-spacing:-0.14px}
+.mm-foot{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 24px;background:#f5f6f7}
+.mm-btn{height:40px;padding:0 16px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:-0.14px;cursor:pointer;font-family:inherit}
+.mm-btn.ghost{background:#fff;border:1px solid #a7b6c2;color:#1e2635}
+.mm-btn.ghost:hover{background:#f9fafb}
+.mm-btn.primary{background:#0069d1;border:none;color:#fff}
+.mm-btn.primary:hover{background:#0055a8}
+.mm-btn.primary:disabled{opacity:.5;cursor:not-allowed}
 .modal-body{flex:1;display:flex;min-height:0}
 .modal-side{width:164px;flex-shrink:0;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
 .m-tab{width:100%;text-align:left;border:none;background:transparent;border-radius:6px;padding:8px 10px;font-size:14px;line-height:20px;letter-spacing:-0.14px;color:#516578;font-weight:500;cursor:pointer}
@@ -332,74 +395,143 @@ input[type=checkbox]{width:16px;height:16px;border-radius:4px;border:1px solid #
 .sync-iconbtn:hover{background:#f9fafb}
 .sync-connect{height:28px;border:1px solid #a7b6c2;border-radius:6px;background:#fff;padding:0 10px;font-size:14px;font-weight:600;color:#1e2635;letter-spacing:-0.14px;cursor:pointer;flex-shrink:0}
 .sync-connect:hover{background:#f9fafb}
-.writing-area{width:100%;min-height:90px;border:1px solid #a7b6c2;border-radius:6px;padding:10px;font-size:13px;font-family:inherit;color:#1e2635;resize:vertical}
-.writing-area:focus{outline:none;border-color:#0069d1}
-.add-ex{display:flex;align-items:center;gap:5px;font-size:13px;color:#0069d1;cursor:pointer;background:none;border:none;padding:0;margin-top:10px}
-.add-ex:hover{text-decoration:underline}
+.ex-list{display:flex;flex-direction:column;gap:8px;width:100%}
+.writing-area{width:100%;border:1px solid #a7b6c2;border-radius:6px;padding:10px 12px;font-size:14px;line-height:20px;letter-spacing:-0.14px;font-family:inherit;color:#1e2635;resize:none;overflow:hidden}
+.writing-area::placeholder{color:#516578}
+.writing-area:focus{outline:none;box-shadow:0 0 0 2px #0069d1;border-color:transparent}
+.add-ex{height:28px;display:inline-flex;align-items:center;background:#fff;border:1px solid #a7b6c2;border-radius:6px;padding:0 10px;cursor:pointer;margin-top:8px;transition:background 0.12s}
+.add-ex span{font-size:14px;line-height:20px;font-weight:600;color:#1e2635;letter-spacing:-0.14px}
+.add-ex:hover{background:#f9fafb}
 
 /* ═══ DROPDOWN ═══ */
-.dropdown{position:fixed;background:#fff;border:1px solid #d1d9e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:400;min-width:240px;display:none;overflow:hidden}
-.dropdown.open{display:block}
-.dd-item{padding:10px 14px;font-size:14px;color:#1e2635;cursor:pointer;display:flex;align-items:center;gap:10px;white-space:nowrap}
-.dd-item svg{color:#516578;flex-shrink:0;width:16px;height:16px}
-.dd-item:hover{background:#f0f8ff;color:#0069d1}
-.dd-item:hover svg{color:#0069d1}
+.dropdown{position:fixed;background:#fff;border-radius:8px;box-shadow:0px 1px 3px 0px rgba(60,78,98,0.08),0px 4px 8px 0px rgba(81,101,120,0.16);z-index:400;min-width:240px;display:none;overflow:hidden;padding:8px 0}
+.dropdown.open{display:flex;flex-direction:column;align-items:flex-start}
+.dd-item{width:100%;text-align:left;background:#fff;border:none;cursor:pointer;padding:10px 16px;display:flex;gap:8px;align-items:flex-start;transition:background 0.12s}
+.dd-item span{flex:1 0 0;font-size:14px;line-height:20px;font-weight:400;color:#1e2635;letter-spacing:-0.14px}
+.dd-item:hover{background:#f9fafb}
 </style>
 </head>
 <body>
 
 <!-- ═══════ GOLDEN DEMO DATA ═══════ -->
 <script>
-/* ── Synthesized work week: each weekday is a distinct day of authentic Golden Demo entries.
-   Mon=1 … Fri=5; the pattern repeats every week. UTBMS A&L codes are LEDES-only and used
-   solely by the insurance matter (00006-Continental Crest); other matters carry no A&L codes. ── */
-const ADMIN = { matter:null, client:null, hours:0.3, description:"Morning administrative tasks — email triage, calendar review, and pre-bill queue management.", rate:250, billReady:null };
-const OFFLINE = { matter:null, client:null, hours:0.4, description:"Offline time — not captured by Clio Timekeeping.", nonBillable:true, billReady:null };
+/* ── Synthesized work week. Timekeeper suggests GRANULAR time entries (0.1–0.6h) rolled up from
+   captured activity — heavy on emails & phone logs. Each entry is code-tagged: every matter gets an
+   activity-category code (A1xx); litigation matters additionally get a UTBMS task code (Lxxx).
+   Mon=1 … Fri=5; the weekday pattern repeats every week. ── */
+const MATTERS = {
+  "00001-Harmony":                         { client:"Carmen Harmony",     rate:350, litig:true },
+  "00002-Northbridge Industries":          { client:"Tobias Northbridge", rate:250, litig:true },
+  "00003-Glenhaven Corp":                  { client:"Hunter Mans",        rate:300, litig:false },
+  "00004-Ramsey":                          { client:"Spencer Ramsey",     rate:350, litig:true },
+  "00005-Glenhaven Corp":                  { client:"Hunter Mans",        rate:350, litig:false },
+  "00006-Continental Crest Life Insurance":{ client:"Fontaine Jones",     rate:250, litig:true },
+  "00007-Theodore":                        { client:"Theo Theodore",      rate:350, litig:true },
+  "00008-Theodore":                        { client:"Theo Theodore",      rate:350, litig:true },
+  "00009-Bradley":                         { client:"Mason Bradley",      rate:350, litig:true },
+  "00010-Atlas Athletic Co.":              { client:"Atlas Athletic Co.", rate:450, litig:true },
+  "00011-ABC":                             { client:"Liam Dawson",        rate:350, litig:false },
+  "00012-Troy PhD":                        { client:"Troy PhD",           rate:300, litig:false },
+  "00013-Sampson":                         { client:"Howard Sampson",     rate:350, litig:false },
+  "00014-Bradley":                         { client:"Mason Bradley",      rate:300, litig:true },
+  "00015-Sterling":                        { client:"Elena Sterling",     rate:750, litig:true },
+  "00016-Lone Star":                       { client:"Ed Walters",         rate:350, litig:false },
+  "00017-Johnson":                         { client:"Sarah Johnson",      rate:250, litig:true },
+};
+const ACT_CODE  = { research:"A102", draft:"A103", review:"A104", email:"A106", call:"A106", plan:"A101", meeting:"A105" };
+const TASK_CODE = { research:"L120", draft:"L120", review:"L140", email:"L110", call:"L110", plan:"L110", meeting:"L120" };
+const ADMIN_SESS = { admin:true, mins:18, d:"Email triage, calendar review, and pre-bill queue management." };
 const WEEK = {
-  1: [ // Monday — Family / Civil Litigation / Personal Injury intake
-    { matter:"00001-Harmony", client:"Carmen Harmony", hours:1.0, rate:350, billReady:false, description:"Legal research on parental alienation case law and evidentiary requirements for custody modification." },
-    { matter:"00001-Harmony", client:"Carmen Harmony", hours:0.5, rate:350, billReady:false, description:"Internal strategy discussion with associate regarding evidence collection for parental alienation claims." },
-    { matter:"00004-Ramsey", client:"Spencer Ramsey", hours:0.8, rate:350, billReady:false, description:"Reviewing initial client intake forms and documentation provided by Spencer Ramsey." },
-    { matter:"00004-Ramsey", client:"Spencer Ramsey", hours:1.2, rate:350, billReady:false, description:"Reviewing defendant's social media accounts for additional evidence of defamatory statements." },
-    { matter:"00009-Bradley", client:"Mason Bradley", hours:1.5, rate:350, billReady:false, description:"Client intake and consultation with Mason Bradley regarding T-bone accident and injuries." },
-    { matter:"00009-Bradley", client:"Mason Bradley", hours:1.0, rate:350, billReady:false, description:"Reviewing initial accident report, police narrative, and client's statement of events." },
-    { matter:"00017-Johnson", client:"Sarah Johnson", hours:1.25, rate:250, billReady:true, description:"Preliminary legal research on premises liability law and precedents related to unmarked retail spills (MegaStore slip-and-fall)." },
-    ADMIN,
+  1: [ // Monday — Family / Civil Litigation / Personal Injury
+    { m:"00001-Harmony", type:"review", mins:18, d:"Reviewing existing custody order and preliminary documents from Carmen Harmony." },
+    { m:"00001-Harmony", type:"research", mins:30, d:"Legal research on parental alienation case law and evidentiary requirements." },
+    { m:"00001-Harmony", type:"email", mins:6, d:"Email to Carmen Harmony confirming custody goals and document requests." },
+    { m:"00001-Harmony", type:"draft", mins:24, d:"Drafting outline for petition for custody modification." },
+    { m:"00001-Harmony", type:"call", mins:12, d:"Call with associate re: evidence collection strategy.", lcode:"L120" },
+    { m:"00001-Harmony", type:"email", mins:6, d:"Email to opposing counsel re: scheduling and disclosures." },
+    { m:"00004-Ramsey", type:"review", mins:12, d:"Reviewing client intake forms provided by Spencer Ramsey.", lcode:"L110" },
+    { m:"00004-Ramsey", type:"research", mins:30, d:"Research on defamation per se and online publication case law." },
+    { m:"00004-Ramsey", type:"draft", mins:18, d:"Drafting demand letter to defendant's counsel." },
+    { m:"00004-Ramsey", type:"email", mins:6, d:"Email to Spencer Ramsey re: case status and next steps." },
+    { m:"00004-Ramsey", type:"review", mins:18, d:"Reviewing defendant's social media for defamatory statements.", lcode:"L110" },
+    { m:"00009-Bradley", type:"call", mins:18, d:"Client intake call with Mason Bradley re: T-bone accident.", lcode:"L110" },
+    { m:"00009-Bradley", type:"review", mins:12, d:"Reviewing accident report and police narrative." },
+    { m:"00009-Bradley", type:"email", mins:6, d:"Email to insurance adjuster — notice of representation." },
+    { m:"00009-Bradley", type:"draft", mins:12, d:"Drafting letter of representation and notices to insurers." },
+    { m:"00017-Johnson", type:"research", mins:24, d:"Research on premises liability for unmarked retail spills (MegaStore).", billReady:true },
+    { m:"00017-Johnson", type:"call", mins:12, d:"Call with Sarah Johnson to clarify fall details." },
+    { m:"00017-Johnson", type:"draft", mins:12, d:"Drafting retainer and medical records authorization forms." },
+    ADMIN_SESS,
   ],
-  2: [ // Tuesday — Corporate / Commercial
-    { matter:"00002-Northbridge Industries", client:"Tobias Northbridge", hours:1.5, rate:250, billReady:false, description:"Initial client consultation and intake for Northbridge Industries shareholder dispute." },
-    { matter:"00002-Northbridge Industries", client:"Tobias Northbridge", hours:1.5, rate:250, billReady:false, description:"Legal research on minority shareholder rights and breaches of fiduciary duty under state law." },
-    { matter:"00005-Glenhaven Corp", client:"Hunter Mans", hours:2.0, rate:350, billReady:false, description:"Drafting initial sections of shareholder agreement, focusing on share transfer restrictions." },
-    { matter:"00003-Glenhaven Corp", client:"Hunter Mans", hours:1.0, rate:300, billReady:false, description:"Review of Glenhaven Corp.'s non-compete agreement and initial documents provided by client." },
-    { matter:"00016-Lone Star", client:"Ed Walters", hours:2.0, rate:350, billReady:true, description:"Conference call with seller's counsel to negotiate key representations and warranties for the Asset Purchase Agreement." },
-    ADMIN,
+  2: [ // Tuesday — Corporate / Commercial / Bankruptcy
+    { m:"00002-Northbridge Industries", type:"call", mins:18, d:"Intake call for Northbridge Industries Chapter 11 and shareholder dispute.", lcode:"L110" },
+    { m:"00002-Northbridge Industries", type:"review", mins:30, d:"Review of shareholder agreement and corporate bylaws; buy-sell provisions.", lcode:"L140" },
+    { m:"00002-Northbridge Industries", type:"research", mins:30, d:"Research on minority shareholder rights and breaches of fiduciary duty." },
+    { m:"00002-Northbridge Industries", type:"email", mins:6, d:"Email to Tobias Northbridge re: required corporate records." },
+    { m:"00002-Northbridge Industries", type:"email", mins:6, d:"Email to senior partner summarizing initial findings." },
+    { m:"00005-Glenhaven Corp", type:"draft", mins:36, d:"Drafting share-transfer restriction sections of shareholder agreement." },
+    { m:"00005-Glenhaven Corp", type:"email", mins:6, d:"Email to Hunter Mans with first draft for review." },
+    { m:"00005-Glenhaven Corp", type:"draft", mins:24, d:"Drafting indemnification and limitation-of-liability provisions." },
+    { m:"00005-Glenhaven Corp", type:"review", mins:18, d:"Reviewing client feedback and revising dispute-resolution clauses." },
+    { m:"00003-Glenhaven Corp", type:"review", mins:18, d:"Review of non-compete agreement and client documents." },
+    { m:"00003-Glenhaven Corp", type:"research", mins:24, d:"Research on enforceability of non-compete clauses in jurisdiction." },
+    { m:"00016-Lone Star", type:"call", mins:24, d:"Conference call with seller's counsel to negotiate reps and warranties.", billReady:true },
+    { m:"00016-Lone Star", type:"review", mins:30, d:"Reviewing financial statements and tax returns for Grillty due diligence." },
+    { m:"00016-Lone Star", type:"draft", mins:30, d:"Drafting Asset Purchase Agreement from the agreed term sheet." },
+    { m:"00016-Lone Star", type:"email", mins:6, d:"Email to Ed Walters summarizing negotiation points." },
+    ADMIN_SESS,
   ],
   3: [ // Wednesday — IP / Immigration / Real Estate
-    { matter:"00010-Atlas Athletic Co.", client:"Atlas Athletic Co.", hours:1.25, rate:450, billReady:true, description:"Drafting initial cease and desist letter to Noname Unlimited Shoe Company re: trade dress infringement." },
-    { matter:"00010-Atlas Athletic Co.", client:"Atlas Athletic Co.", hours:2.0, rate:450, billReady:false, description:"Legal research on 'Triple Band Mark' and 'Shell-Toe Classic' trade dress protection and infringement precedents." },
-    { matter:"00012-Troy PhD", client:"Troy PhD", hours:2.0, rate:300, billReady:false, description:"Draft initial versions of Form I-485, I-765, and I-131 based on client information and supporting documents." },
-    { matter:"00012-Troy PhD", client:"Troy PhD", hours:0.75, rate:300, billReady:false, description:"Client consultation via phone to discuss application strategy and outstanding document requirements." },
-    { matter:"00011-ABC", client:"Liam Dawson", hours:1.5, rate:350, billReady:false, description:"Review of draft purchase agreement, identifying key terms and potential negotiation points." },
-    { matter:"00011-ABC", client:"Liam Dawson", hours:0.6, rate:350, billReady:false, description:"Phone call with Liam Dawson to discuss agreement review and outline amendment requests." },
-    ADMIN,
-    OFFLINE,
+    { m:"00010-Atlas Athletic Co.", type:"research", mins:30, d:"Research on 'Triple Band Mark' and 'Shell-Toe Classic' trade dress precedents.", lcode:"L120" },
+    { m:"00010-Atlas Athletic Co.", type:"draft", mins:30, d:"Drafting cease and desist letter to Noname Unlimited Shoe Company.", billReady:true, lcode:"L120" },
+    { m:"00010-Atlas Athletic Co.", type:"review", mins:18, d:"Reviewing client product photos and marketing evidence.", lcode:"L110" },
+    { m:"00010-Atlas Athletic Co.", type:"research", mins:24, d:"Reviewing recent apparel and footwear trade dress case law.", lcode:"L120" },
+    { m:"00010-Atlas Athletic Co.", type:"email", mins:6, d:"Email to Atlas Athletic Co. re: infringement strategy." },
+    { m:"00010-Atlas Athletic Co.", type:"email", mins:6, d:"Email to paralegal assigning document-collection tasks." },
+    { m:"00012-Troy PhD", type:"draft", mins:36, d:"Drafting Forms I-485, I-765, and I-131 from client information." },
+    { m:"00012-Troy PhD", type:"review", mins:18, d:"Reviewing client documents — passport, certificates, and records." },
+    { m:"00012-Troy PhD", type:"call", mins:12, d:"Call with Troy PhD re: application strategy and documents." },
+    { m:"00012-Troy PhD", type:"research", mins:12, d:"Research on recent USCIS policy updates and processing times." },
+    { m:"00012-Troy PhD", type:"email", mins:6, d:"Email to Troy PhD with outstanding document checklist." },
+    { m:"00011-ABC", type:"review", mins:24, d:"Review of draft purchase agreement and key terms." },
+    { m:"00011-ABC", type:"call", mins:12, d:"Phone call with Liam Dawson re: amendment requests." },
+    { m:"00011-ABC", type:"draft", mins:12, d:"Drafting internal memo on negotiation strategy." },
+    { m:"00011-ABC", type:"email", mins:6, d:"Email to title company to coordinate inspection scheduling." },
+    ADMIN_SESS,
+    { offline:true, mins:24 },
   ],
-  4: [ // Thursday — Criminal / Employment + Insurance (LEDES, UTBMS A&L codes)
-    { matter:"00007-Theodore", client:"Theo Theodore", hours:2.0, rate:350, billReady:false, description:"Legal research on the intent element for grand larceny and precedents for a mistaken-identity defense." },
-    { matter:"00007-Theodore", client:"Theo Theodore", hours:1.5, rate:350, billReady:false, description:"Analyzing surveillance footage produced in discovery, noting quality issues and identification discrepancies." },
-    { matter:"00008-Theodore", client:"Theo Theodore", hours:1.5, rate:350, billReady:false, description:"Review and analysis of Theo Theodore's employment contract and termination letter." },
-    { matter:"00006-Continental Crest Life Insurance", client:"Fontaine Jones", hours:1.0, rate:250, billReady:false, tags:["A104","L110"], description:"Review of initial medical records, police report, and client-provided incident details." },
-    { matter:"00006-Continental Crest Life Insurance", client:"Fontaine Jones", hours:0.75, rate:250, billReady:false, tags:["A102","L120"], description:"Researching traffic laws pertaining to rear-end collisions and precedent for whiplash/back-pain claims." },
-    { matter:"00006-Continental Crest Life Insurance", client:"Fontaine Jones", hours:2.0, rate:250, billReady:true, tags:["A103","L160"], description:"Drafting initial demand letter for client Fontaine Jones, outlining damages and liability arguments." },
-    ADMIN,
+  4: [ // Thursday — Criminal / Employment / Insurance (LEDES — A&L codes)
+    { m:"00007-Theodore", type:"research", mins:30, d:"Research on intent element for grand larceny and mistaken-identity defense.", lcode:"L120" },
+    { m:"00007-Theodore", type:"review", mins:30, d:"Analyzing surveillance footage from discovery for identification discrepancies.", lcode:"L140" },
+    { m:"00007-Theodore", type:"draft", mins:12, d:"Drafting discovery request to the prosecution.", lcode:"L310" },
+    { m:"00007-Theodore", type:"call", mins:18, d:"Strategy call with defense team re: alibi corroboration.", lcode:"L120" },
+    { m:"00007-Theodore", type:"email", mins:6, d:"Email to Theo Theodore re: case strategy update." },
+    { m:"00008-Theodore", type:"review", mins:24, d:"Review of employment contract and termination letter.", lcode:"L140" },
+    { m:"00008-Theodore", type:"research", mins:18, d:"Research on wrongful-termination precedents in sports employment.", lcode:"L120" },
+    { m:"00008-Theodore", type:"email", mins:6, d:"Email to Theo Theodore re: document collection." },
+    { m:"00006-Continental Crest Life Insurance", type:"review", mins:18, d:"Review of medical records, police report, and incident details.", lcode:"L110" },
+    { m:"00006-Continental Crest Life Insurance", type:"research", mins:18, d:"Research on traffic laws and whiplash/back-pain claim precedent.", lcode:"L120" },
+    { m:"00006-Continental Crest Life Insurance", type:"draft", mins:30, d:"Drafting demand letter for Fontaine Jones — damages and liability.", billReady:true, lcode:"L120" },
+    { m:"00006-Continental Crest Life Insurance", type:"call", mins:12, d:"Call with Fontaine Jones re: treatment status and next steps.", lcode:"L110" },
+    { m:"00006-Continental Crest Life Insurance", type:"email", mins:6, d:"Email to adjuster requesting policy limits." },
+    { m:"00006-Continental Crest Life Insurance", type:"review", mins:12, d:"Reviewing defendant's potential evidence and counter-arguments.", lcode:"L140" },
+    ADMIN_SESS,
   ],
   5: [ // Friday — Wills & Estate / Divorce / Personal Injury
-    { matter:"00013-Sampson", client:"Howard Sampson", hours:1.5, rate:350, billReady:false, description:"Initial client consultation regarding intestate probate for the Howard Sampson Estate." },
-    { matter:"00013-Sampson", client:"Howard Sampson", hours:2.0, rate:350, billReady:true, description:"Drafted initial Petition for Probate and reviewed preliminary asset list." },
-    { matter:"00015-Sterling", client:"Elena Sterling", hours:2.0, rate:750, billReady:false, description:"Review of newly received discovery documents from opposing counsel, focusing on financial inconsistencies and offshore activity." },
-    { matter:"00015-Sterling", client:"Elena Sterling", hours:1.0, rate:750, billReady:false, description:"Legal research on international jurisdiction for asset recovery in high-net-worth divorce cases." },
-    { matter:"00014-Bradley", client:"Mason Bradley", hours:1.5, rate:300, billReady:false, description:"Initial consultation with Mason Bradley regarding slip-and-fall at Beachville SuperGrocers." },
-    ADMIN,
+    { m:"00013-Sampson", type:"call", mins:18, d:"Client consultation re: intestate probate for the Howard Sampson Estate." },
+    { m:"00013-Sampson", type:"research", mins:18, d:"Research on state intestacy laws for asset distribution." },
+    { m:"00013-Sampson", type:"draft", mins:30, d:"Drafting Petition for Probate and reviewing asset list.", billReady:true },
+    { m:"00013-Sampson", type:"review", mins:18, d:"Reviewing preliminary asset list and probate court forms." },
+    { m:"00013-Sampson", type:"email", mins:6, d:"Email to Howard Sampson re: required probate documents." },
+    { m:"00015-Sterling", type:"review", mins:36, d:"Review of discovery for financial inconsistencies and offshore activity.", lcode:"L140" },
+    { m:"00015-Sterling", type:"research", mins:18, d:"Research on international jurisdiction for asset recovery.", lcode:"L120" },
+    { m:"00015-Sterling", type:"draft", mins:24, d:"Drafting emergency motion for a TRO on offshore assets.", lcode:"L210" },
+    { m:"00015-Sterling", type:"call", mins:12, d:"Call with Elena Sterling re: asset-preservation strategy.", lcode:"L110" },
+    { m:"00015-Sterling", type:"email", mins:6, d:"Email to forensic accountant re: preliminary findings." },
+    { m:"00014-Bradley", type:"call", mins:18, d:"Consultation with Mason Bradley re: slip-and-fall at Beachville SuperGrocers.", lcode:"L110" },
+    { m:"00014-Bradley", type:"draft", mins:12, d:"Drafting evidence-preservation demand to Beachville SuperGrocers.", lcode:"L120" },
+    { m:"00014-Bradley", type:"email", mins:6, d:"Email to Mason Bradley confirming retainer and next steps." },
+    ADMIN_SESS,
   ],
 };
 
@@ -417,6 +549,9 @@ const NOISE = [
   { icon:"outlook", desc:"Outlook: Re: Happy hour Friday?",     durs:[1] },
   { icon:"chrome",  desc:"Chrome: Weather",                     durs:[1] },
   { icon:"outlook", desc:"Outlook: Personal email",             durs:[1,2] },
+  { icon:"outlook", desc:"Outlook: Newsletter — Law360 Daily",  durs:[1,2] },
+  { icon:"offline", desc:"Missed call — unknown number",        durs:[1] },
+  { icon:"outlook", desc:"Outlook: Re: Office closure notice",  durs:[0.5,1] },
 ];
 function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 function fmtClock(min){ let h=Math.floor(min/60), m=min%60; const ap=h>=12?'pm':'am'; let hh=h%12; if(hh===0)hh=12; return hh+':'+String(m).padStart(2,'0')+ap; }
@@ -424,38 +559,70 @@ function fmtDur(min){ return min<1 ? Math.round(min*60)+'s' : Math.round(min)+'m
 function splitMins(total,n,rnd){ if(n<=1) return [total]; const parts=[]; let rem=total; for(let i=0;i<n-1;i++){ const avg=rem/(n-i); let v=Math.max(2,Math.round(avg*(0.6+rnd()*0.8))); v=Math.min(v, rem-2*(n-1-i)); if(v<2)v=2; parts.push(v); rem-=v; } parts.push(Math.max(2,rem)); return parts; }
 function activityMix(e){
   const M=(e.matter||'Admin').replace(/^\d+-/,''); const F=M.replace(/[^A-Za-z0-9]+/g,'_').replace(/_+$/,'').slice(0,26); const C=e.client||'the client';
-  const d=(e.description||'').toLowerCase();
-  if(e.matter===null && !e.nonBillable) return [{icon:'outlook',d:'Outlook: Clearing inbox'},{icon:'outlook',d:'Outlook: Reviewing today’s calendar'},{icon:'clio',d:'Clio: Reviewing pre-bill queue'}];
-  if(/research|precedent|case law|statut|jurisdiction/.test(d)) return [{icon:'chrome',d:'Chrome: Westlaw — '+M+' research'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_CaseLaw.pdf'},{icon:'word',d:'Word: '+F+'_Research_Memo.docx'},{icon:'chrome',d:'Chrome: Google Scholar — '+M}];
-  if(/draft|letter|petition|agreement|motion|memo|forms?|i-485/.test(d)) return [{icon:'word',d:'Word: '+F+'_Draft.docx'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_Reference.pdf'},{icon:'word',d:'Word: '+F+'_Draft.docx (cont.)'},{icon:'outlook',d:'Outlook: Sending draft to '+C}];
-  if(/review|analy|evidence|discovery|footage|document|records/.test(d)) return [{icon:'adobe',d:'Adobe Acrobat: '+F+'_Documents.pdf'},{icon:'word',d:'Word: '+F+'_Review_Notes.docx'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_Exhibits.pdf'}];
-  if(/negotiat|court|closing|prepar|conference call/.test(d)) return [{icon:'word',d:'Word: '+F+'_Prep.docx'},{icon:'adobe',d:'Adobe Acrobat: '+F+'_Filing.pdf'},{icon:'outlook',d:'Outlook: Scheduling with opposing counsel'},{icon:'offline',d:'Call with '+C}];
-  if(/strateg|internal/.test(d)) return [{icon:'outlook',d:'Outlook: Internal strategy thread — '+M},{icon:'word',d:'Word: '+F+'_Strategy.docx'},{icon:'clio',d:'Clio: Matter dashboard — '+M}];
-  if(/consult|intake|client|correspond|communicat|call|meeting/.test(d)) return [{icon:'outlook',d:'Outlook: Correspondence with '+C},{icon:'offline',d:'Call with '+C},{icon:'clio',d:'Clio: Logging notes — '+M},{icon:'outlook',d:'Outlook: Follow-up to '+C}];
-  return [{icon:'clio',d:'Clio: '+M+' matter'},{icon:'word',d:'Word: '+F+'.docx'},{icon:'outlook',d:'Outlook: '+M+' email'}];
+  switch(e.type){
+    case 'email':  return [{icon:'outlook', d:'Outlook: '+(e.description && e.description.length<=52 ? e.description : 'Email — '+M)}];
+    case 'call':   return [{icon:'offline', d:'Phone call — '+C}];
+    case 'research': return [{icon:'chrome', d:'Chrome: Westlaw — '+M}, {icon:'adobe', d:'Adobe Acrobat: '+F+'_CaseLaw.pdf'}, {icon:'word', d:'Word: '+F+'_Research.docx'}];
+    case 'draft':  return [{icon:'word', d:'Word: '+F+'_Draft.docx'}, {icon:'word', d:'Word: '+F+'_Draft.docx (cont.)'}, {icon:'adobe', d:'Adobe Acrobat: '+F+'_Reference.pdf'}];
+    case 'review': return [{icon:'adobe', d:'Adobe Acrobat: '+F+'_Documents.pdf'}, {icon:'word', d:'Word: '+F+'_Notes.docx'}];
+    case 'meeting':return [{icon:'offline', d:'Conference — '+M}, {icon:'clio', d:'Clio: Notes — '+M}];
+    case 'plan':   return [{icon:'word', d:'Word: '+F+'_Plan.docx'}, {icon:'clio', d:'Clio: Matter dashboard — '+M}];
+    case 'admin':  return [{icon:'outlook', d:'Outlook: Clearing inbox'}, {icon:'outlook', d:'Outlook: Reviewing today’s calendar'}, {icon:'clio', d:'Clio: Reviewing pre-bill queue'}];
+    default:       return [{icon:'clio', d:'Clio: '+M}, {icon:'word', d:'Word: '+F+'.docx'}];
+  }
 }
 function genActivities(dayEntries, seed){
   const rnd=mulberry32((seed*2654435761)>>>0); const acc=[];
   dayEntries.forEach(e=>{
     const total=Math.round(e.hours*60);
     if(e.nonBillable){ acc.push({mins:total, icon:'offline', desc:'Offline time', entryId:e.id}); return; }
-    const mix=activityMix(e); const n=Math.max(2, Math.min(12, Math.round(total/7)));
+    const mix=activityMix(e); const n=(e.type==='email'||e.type==='call') ? 1 : Math.max(1, Math.min(6, Math.round(total/8)));
     splitMins(total,n,rnd).forEach((m,i)=>{ const a=mix[i%mix.length]; acc.push({mins:m, icon:a.icon, desc:a.d, entryId:e.id}); });
   });
-  const seq=acc.slice(); const noiseN=Math.round(acc.length*0.8);
+  const seq=acc.slice(); const noiseN=Math.round(acc.length*1.0);
   for(let i=0;i<noiseN;i++){ const z=NOISE[Math.floor(rnd()*NOISE.length)]; const du=z.durs[Math.floor(rnd()*z.durs.length)]; seq.splice(Math.floor(rnd()*(seq.length+1)),0,{mins:du, icon:z.icon, desc:z.desc, entryId:null}); }
   if(seq.length) seq.splice(Math.floor(seq.length*0.5),0,{mins:45, icon:'offline', desc:'Lunch', entryId:null});
   let t=480; const out=[];
   seq.forEach(ev=>{ if(rnd()<0.25) t+=Math.floor(rnd()*5); out.push({time:fmtClock(t), dur:fmtDur(ev.mins), icon:ev.icon, desc:ev.desc, entryId:ev.entryId}); t+=Math.max(1,Math.round(ev.mins)); });
   return out;
 }
+const INSURANCE_MATTER="00006-Continental Crest Life Insurance";
+/* Clio custom activity categories (firm-defined) — used by all non-LEDES matters.
+   Only the insurance matter uses UTBMS A&L codes. */
+function customCategory(type, desc){
+  const d=(desc||'').toLowerCase();
+  switch(type){
+    case 'research': return 'Case research';
+    case 'review':   return 'Document Review';
+    case 'email':    return 'Correspondence';
+    case 'plan':     return 'Case Strategy';
+    case 'meeting':  return /counsel|negotiat/.test(d) ? 'Negotiation' : (/associate|partner|team|internal/.test(d) ? 'Internal Conference' : 'Conference with client');
+    case 'call':
+      if(/intake|consult/.test(d)) return 'Consultation Call';
+      if(/counsel|negotiat/.test(d)) return 'Conference Call';
+      if(/associate|partner|team|internal/.test(d)) return 'Internal Conference';
+      return 'Conference with client';
+    case 'draft':
+      if(/demand|cease/.test(d)) return 'Drafting Demand Letter';
+      if(/agreement|contract|purchase|apa/.test(d)) return 'Contract Drafting';
+      if(/motion|petition|tro|discovery request|court/.test(d)) return 'Draft court documents';
+      if(/forms?|i-485|retainer|authorization/.test(d)) return 'Drafting (Forms)';
+      if(/memo|outline|notice|representation|preservation/.test(d)) return 'Drafting (Correspondence)';
+      return 'Drafting';
+    default: return 'Activities';
+  }
+}
 function buildEntries(list){
-  return list.map((e,i)=>({
-    id:i+1, matter:e.matter||null, client:e.client||null, hours:e.hours, description:e.description,
-    tags:e.tags?e.tags.slice():[], rate:e.nonBillable?null:(e.rate||0),
-    billable:e.nonBillable?0:Math.round(e.hours*(e.rate||0)),
-    billReady:('billReady' in e)?e.billReady:false, nonBillable:!!e.nonBillable
-  }));
+  return list.map((s,i)=>{
+    const hours=Math.round((s.mins/60)*100)/100;
+    if(s.offline) return { id:i+1, matter:null, client:null, hours, type:'offline', description:"Offline time — not captured by Clio Timekeeping.", tags:[], rate:null, billable:0, billReady:null, nonBillable:true };
+    if(s.admin)   return { id:i+1, matter:null, client:null, hours, type:'admin', description:s.d, tags:[], rate:250, billable:Math.round(hours*250), billReady:null, nonBillable:false };
+    const M=MATTERS[s.m]||{client:'', rate:0};
+    let tags;
+    if(s.m===INSURANCE_MATTER){ const code=ACT_CODE[s.type]||'A100'; const lcode=s.lcode||TASK_CODE[s.type]||'L120'; tags=[code, lcode]; }
+    else { tags=[customCategory(s.type, s.d)]; }
+    return { id:i+1, matter:s.m, client:M.client, hours, type:s.type, description:s.d, tags, rate:M.rate, billable:Math.round(hours*M.rate), billReady:!!s.billReady, nonBillable:false };
+  });
 }
 /* live state for the loaded day (set by loadDay) */
 let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
@@ -464,14 +631,8 @@ let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
 
 <!-- ═══════ GEAR DROPDOWN ═══════ -->
 <div class="dropdown" id="gearDropdown">
-  <div class="dd-item" onclick="openSettings()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-    Clio Timekeeping settings
-  </div>
-  <div class="dd-item" onclick="closeDropdown()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 1 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
-    Manage activity categories
-  </div>
+  <button class="dd-item" onclick="openSettings()"><span>Clio Timekeeping settings</span></button>
+  <button class="dd-item" onclick="closeDropdown()"><span>Manage activity categories</span></button>
 </div>
 
 <!-- ═══════ SETTINGS MODAL ═══════ -->
@@ -489,6 +650,23 @@ let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
         <button class="m-tab" data-tab="writing" onclick="switchModalTab('writing')">Writing</button>
       </div>
       <div class="modal-main" id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MERGE MODAL ═══════ -->
+<div class="overlay" id="mergeModal">
+  <div class="merge-modal" role="dialog" aria-modal="true" aria-label="Merge time entries">
+    <div class="mm-head">
+      <h2 class="mm-title" id="mmTitle">Merge time entries</h2>
+      <button class="modal-x" onclick="closeMergeModal()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e2635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="mm-body" id="mmBody"></div>
+    <div class="mm-foot">
+      <button class="mm-btn ghost" onclick="closeMergeModal()">Cancel</button>
+      <button class="mm-btn primary" id="mmConfirm" onclick="confirmMerge()">Merge</button>
     </div>
   </div>
 </div>
@@ -570,8 +748,8 @@ let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
         </div>
       </div>
       <div class="tabs">
-        <div class="tab" onclick="switchTab(this)"><span>Firm activity entries</span></div>
-        <div class="tab active" onclick="switchTab(this)"><span>Your timekeeping</span></div>
+        <div class="tab tab-disabled"><span>Firm activity entries</span></div>
+        <div class="tab active"><span>Your timekeeping</span></div>
       </div>
     </div>
 
@@ -611,13 +789,14 @@ let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
 
         <!-- TABLE -->
         <div class="table-wrap">
-          <div class="table-toolbar">
-            <p class="tt-title" id="ttTitle">Feb 9, 2026 time entries</p>
-            <div class="filters-wrap" id="filtersWrap"></div>
-          </div>
           <div class="table-card">
+            <div class="table-toolbar" id="tableToolbar">
+              <p class="tt-title" id="ttTitle">Feb 9, 2026 time entries</p>
+              <div class="filters-wrap" id="filtersWrap"></div>
+              <div class="bulk-inline" id="bulkBar"></div>
+            </div>
             <div class="thead">
-              <div class="col-check"><input type="checkbox" aria-label="Select all"></div>
+              <div class="col-check"><input type="checkbox" id="selectAllCb" aria-label="Select all" onclick="toggleSelectAll()"></div>
               <div class="col-matter">Matter</div>
               <div class="col-hours">Hours</div>
               <div class="col-desc">Description</div>
@@ -634,8 +813,10 @@ let ALL_TIMELINE = [], ENTRY_DETAILS = {}, MATTER_LIST = [];
 
     <!-- FOOTER BANNER -->
     <div class="footer-banner">
-      <p class="fb-text" id="fbText">There is <b>32m</b> of unaccounted time (<b>24 captured events</b>).</p>
-      <button class="fb-btn" onclick="openTimelinePanel('unaccounted')">See unaccounted events</button>
+      <div class="fb-group">
+        <p class="fb-text" id="fbText">There is <b>32m</b> of unaccounted time (<b>24 captured events</b>).</p>
+        <button class="fb-btn" onclick="openTimelinePanel('unaccounted')">See unaccounted events</button>
+      </div>
     </div>
   </main>
 </div>
@@ -666,9 +847,12 @@ const PENCIL_SVG='<svg class="edit-pencil" width="28" height="28" viewBox="0 0 3
 let entries = [];
 let current = new Date(2026,1,9); // Mon Feb 9 2026
 let selectedRow=null, panelMode=null, tlTab='all';
+let selectedIds=new Set();
 let tlFilterOpen=false, tlMinDur=0, tlKeyword='';
-let entriesFilterOpen=false, fMatter='', fBillable='all', fCategory='';
+let entriesFilterOpen=false, fMatter='', fBillable='all', fCategory='', cardFilter='all';
 function matchEntryFilter(e){
+  if(cardFilter==='draft' && e.billReady!==false) return false;
+  if(cardFilter==='billready' && e.billReady!==true) return false;
   if(fMatter){ const hay=((e.matter||'')+' '+(e.client||'')).toLowerCase(); if(!hay.includes(fMatter.toLowerCase())) return false; }
   if(fBillable==='billable' && (e.nonBillable || !e.billable)) return false;
   if(fBillable==='nonbillable' && !e.nonBillable) return false;
@@ -679,14 +863,15 @@ function matchEntryFilter(e){
 /* ═══ TABLE ═══ */
 function renderTable(){
   const tb=document.getElementById('tableBody'); tb.innerHTML='';
-  if(!entries.length){ tb.innerHTML='<div style="padding:48px 16px;text-align:center;color:#8797a3;font-size:14px">No time entries for this day.</div>'; updateSummaryCards(); return; }
+  if(!entries.length){ tb.innerHTML='<div style="padding:48px 16px;text-align:center;color:#8797a3;font-size:14px">No time entries for this day.</div>'; updateSummaryCards(); renderBulkBar(); return; }
   const list=entries.filter(matchEntryFilter);
-  if(!list.length){ tb.innerHTML='<div style="padding:40px 16px;text-align:center;color:#8797a3;font-size:13px">No entries match your filters.</div>'; updateSummaryCards(); return; }
+  if(!list.length){ tb.innerHTML='<div style="padding:40px 16px;text-align:center;color:#8797a3;font-size:13px">No entries match your filters.</div>'; updateSummaryCards(); renderBulkBar(); return; }
   list.forEach(e=>{
     const isNS=!e.matter;
     const row=document.createElement('div');
     row.className='row'+(selectedRow===e.id?' selected':'');
-    row.onclick=(ev)=>{ if(ev.target.closest('.act-btn')||ev.target.closest('.toggle')||ev.target.closest('.stepper')||ev.target.closest('input')) return; selectRow(e.id); };
+    row.dataset.id=e.id;
+    row.onclick=(ev)=>{ if(ev.target.closest('.act-btn')||ev.target.closest('.toggle')||ev.target.closest('.stepper')||ev.target.closest('input')||ev.target.closest('.li-pop')||ev.target.closest('.add-cat')) return; selectRow(e.id); };
 
     let tgClass='toggle', tgIcon, tgDisabled='';
     if(e.billReady===null){ tgClass+=' disabled'; tgDisabled='disabled'; tgIcon='<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'; }
@@ -701,10 +886,11 @@ function renderTable(){
       : `<span class="bill-amt">$${e.billable.toFixed(2)}</span><span class="bill-rate">$${e.rate}.00/h</span>`;
 
     row.innerHTML=`
-      <div class="col-check"><input type="checkbox" aria-label="Select entry" onclick="event.stopPropagation()"></div>
-      <div class="cell c-matter cell-pad" title="Edit matter">
+      <div class="col-check"><input type="checkbox" aria-label="Select entry" ${selectedIds.has(e.id)?'checked':''} onclick="toggleSelect(${e.id},event)"></div>
+      <div class="cell c-matter cell-pad" onclick="openMatterPicker(${e.id},event)" title="Change matter">
         ${isNS?'<span class="matter-ns">Not selected</span>':`<span class="matter-name">${e.matter}</span><span class="client-name">${e.client}</span>`}
         ${PENCIL_SVG}
+        ${matterPickerFor===e.id?matterPopHTML(e.id):''}
       </div>
       <div class="cell c-hours">
         <span class="hours-val">${e.hours.toFixed(1)}</span>
@@ -713,9 +899,9 @@ function renderTable(){
           <button onclick="stepHours(${e.id},-1);event.stopPropagation()" aria-label="Decrease">${svgLucide(ICON_CHEV_DOWN,12)}</button>
         </span>
       </div>
-      <div class="cell c-desc cell-pad" title="Edit description">
-        <p class="desc-text">${e.description}</p>
-        <div class="pills">${tags}${addCat}</div>
+      <div class="cell c-desc cell-pad" title="Edit description" onclick="focusDesc(event,this)">
+        <p class="desc-text" contenteditable="true" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onblur="saveDesc(${e.id},this)">${e.description}</p>
+        <div class="pills">${tags}<span class="add-cat-wrap"><span class="add-cat" onclick="openCatPicker(${e.id},event)">${svgLucide(ICON_PLUS,11)} Category/code</span>${catPickerFor===e.id?catPopHTML(e.id):''}</span></div>
         ${PENCIL_SVG}
       </div>
       <div class="cell c-bill cell-pad" title="Edit billable">${bill}${PENCIL_SVG}</div>
@@ -729,27 +915,133 @@ function renderTable(){
     tb.appendChild(row);
   });
   updateSummaryCards();
+  renderBulkBar();
+}
+/* ── Bulk row selection (checkboxes → toolbar) ── */
+const MERGE_SVG='<svg viewBox="0 0 14 10.5" fill="none"><path d="M0.875 0H3.527C4.32 0 5.086 0.383 5.578 0.984L8.285 4.402H10.5V3.527C10.5 3.172 10.691 2.844 11.02 2.707C11.348 2.57 11.73 2.652 11.977 2.898L13.727 4.648C13.891 4.813 14 5.031 14 5.277C14 5.496 13.891 5.715 13.727 5.879L11.977 7.629C11.73 7.875 11.348 7.957 11.02 7.82C10.691 7.684 10.5 7.355 10.5 7V6.125H8.285L5.578 9.516C5.059 10.145 4.32 10.5 3.527 10.5H0.875C0.383 10.5 0 10.117 0 9.625C0 9.16 0.383 8.75 0.875 8.75H3.527C3.773 8.75 4.047 8.641 4.211 8.422L6.754 5.25L4.211 2.078C4.047 1.887 3.773 1.75 3.527 1.75H0.875C0.383 1.75 0 1.367 0 0.875C0 0.41 0.383 0 0.875 0Z" fill="currentColor"/></svg>';
+const TRASH2_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>';
+function renderBulkBar(){
+  const bar=document.getElementById('bulkBar'), tb=document.getElementById('tableToolbar'), cb=document.getElementById('selectAllCb'); if(!bar) return;
+  const ids=new Set(entries.map(e=>e.id)); [...selectedIds].forEach(id=>{ if(!ids.has(id)) selectedIds.delete(id); });
+  const sel=entries.filter(e=>selectedIds.has(e.id)), visible=entries.filter(matchEntryFilter);
+  if(cb){ cb.checked = visible.length>0 && visible.every(e=>selectedIds.has(e.id)); cb.indeterminate = sel.length>0 && !cb.checked; }
+  if(!sel.length){ bar.innerHTML=''; if(tb) tb.classList.remove('bulk-mode'); return; }
+  if(tb) tb.classList.add('bulk-mode');
+  const merge = sel.length>1 ? `<button class="bulk-btn ghost" onclick="mergeSelected()">${MERGE_SVG}<span>Merge</span></button>` : '';
+  bar.innerHTML=`
+    <div class="bulk-left">
+      <button class="bulk-btn ghost" onclick="clearSelection()">${svgLucide('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',14)}<span>${sel.length} selected</span></button>
+      ${merge}
+      <button class="bulk-btn primary" onclick="markBillReadySelected()"><span>Mark bill-ready</span></button>
+    </div>
+    <button class="bulk-btn danger" onclick="deleteSelected()">${TRASH2_SVG}<span>Delete</span></button>`;
+}
+function toggleSelect(id,ev){ if(ev) ev.stopPropagation(); if(selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id); renderBulkBar(); }
+function toggleSelectAll(){ const visible=entries.filter(matchEntryFilter); const all=visible.length>0 && visible.every(e=>selectedIds.has(e.id)); visible.forEach(e=>{ if(all) selectedIds.delete(e.id); else selectedIds.add(e.id); }); renderTable(); }
+function clearSelection(){ selectedIds.clear(); renderTable(); }
+function markBillReadySelected(){ entries.forEach(e=>{ if(selectedIds.has(e.id) && e.billReady!==null) e.billReady=true; }); selectedIds.clear(); renderTable(); }
+function deleteSelected(){ entries=entries.filter(e=>!selectedIds.has(e.id)); selectedIds.clear(); if(panelMode==='entry') closePanel(); renderTable(); }
+function mergeSelected(){ const sel=entries.filter(e=>selectedIds.has(e.id)); if(sel.length<2) return; openMergeModal(sel); }
+function openMergeModal(sel){
+  const n=sel.length;
+  const matters=[...new Set(sel.map(e=>e.matter).filter(Boolean))];
+  const diff=matters.length>1;
+  const defKey = diff ? '' : (matters[0]||'');
+  document.getElementById('mmTitle').textContent=`Merge ${n} time entries`;
+  document.getElementById('mmConfirm').textContent=`Merge ${n} time entries`;
+  const opts=Object.keys(MATTERS).map(k=>`<option value="${k}" ${k===defKey?'selected':''}>${k} — ${MATTERS[k].client}</option>`).join('');
+  const intro = diff
+    ? `<p>The <b>${n} time entries</b> you selected have different <b>matters</b>.</p><br><p>Choose the following for the merged time entry.</p>`
+    : `<p>Merge the <b>${n} time entries</b> you selected into one. Choose the following for the merged time entry.</p>`;
+  const rate = defKey ? MATTERS[defKey].rate : (sel[0].rate||0);
+  document.getElementById('mmBody').innerHTML=`
+    <div class="mm-text">${intro}</div>
+    <div class="mm-field">
+      <label class="mm-label" for="mmMatter">Matter</label>
+      <div class="mm-select-wrap">
+        <select class="mm-select${defKey?'':' placeholder'}" id="mmMatter" onchange="onMergeMatterChange()">
+          <option value="" disabled ${defKey?'':'selected'}>Select a matter</option>
+          ${opts}
+        </select>
+        <span class="mm-select-chev"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+      </div>
+    </div>
+    <div class="mm-field">
+      <div class="mm-label-row"><label class="mm-label" for="mmRate">Your rate</label>${INFO_SVG}</div>
+      <div class="mm-rate-row">
+        <div class="mm-rate"><input type="text" id="mmRate" value="${rate.toFixed ? rate.toFixed(2) : (rate+'.00')}"><div class="mm-rate-suffix">/hr</div></div>
+        <span class="mm-rate-default">Default rate</span>
+      </div>
+    </div>`;
+  document.getElementById('mmConfirm').disabled = !defKey;
+  document.getElementById('mergeModal').classList.add('open');
+}
+function onMergeMatterChange(){
+  const sel=document.getElementById('mmMatter'); const k=sel.value;
+  sel.classList.toggle('placeholder', !k);
+  if(k && MATTERS[k]){ document.getElementById('mmRate').value=MATTERS[k].rate.toFixed(2); }
+  document.getElementById('mmConfirm').disabled = !k;
+}
+function closeMergeModal(){ document.getElementById('mergeModal').classList.remove('open'); }
+function confirmMerge(){
+  const sel=entries.filter(e=>selectedIds.has(e.id)); if(sel.length<2){ closeMergeModal(); return; }
+  const key=document.getElementById('mmMatter').value; if(!key) return;
+  const rate=Math.round(parseFloat(document.getElementById('mmRate').value)||MATTERS[key].rate);
+  const M=MATTERS[key], first=sel[0];
+  first.hours=Math.round(sel.reduce((s,e)=>s+e.hours,0)*10)/10;
+  first.matter=key; first.client=M.client; first.rate=rate; first.nonBillable=false;
+  first.billable=Math.round(first.hours*rate);
+  if(first.billReady===null) first.billReady=false;
+  const t=[]; sel.forEach(e=>(e.tags||[]).forEach(x=>{ if(!t.includes(x)) t.push(x); })); first.tags=t;
+  const drop=new Set(sel.slice(1).map(e=>e.id));
+  entries=entries.filter(e=>!drop.has(e.id));
+  selectedIds.clear(); closeMergeModal(); renderTable();
 }
 
-function selectRow(id){ selectedRow = selectedRow===id?null:id; renderTable(); }
+function selectRow(id){ selectedRow = selectedRow===id?null:id; document.querySelectorAll('#tableBody .row').forEach(r=>r.classList.toggle('selected', String(r.dataset.id)===String(selectedRow))); }
+function focusDesc(ev, cell){ if(ev.target.closest('.pill')||ev.target.closest('.add-cat-wrap')||ev.target.closest('.li-pop')) return; const p=cell.querySelector('.desc-text'); if(p && document.activeElement!==p){ p.focus(); const r=document.createRange(); r.selectNodeContents(p); r.collapse(false); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); } }
 function stepHours(id,d){ const e=entries.find(x=>x.id===id); if(!e)return; e.hours=Math.max(0.1,Math.round((e.hours+d*0.1)*10)/10); if(!e.nonBillable&&e.rate) e.billable=Math.round(e.hours*e.rate); renderTable(); }
 function toggleBillReady(id){ const e=entries.find(x=>x.id===id); if(!e||e.billReady===null)return; e.billReady=!e.billReady; renderTable(); }
 function deleteEntry(id){ entries=entries.filter(e=>e.id!==id); if(selectedRow===id)selectedRow=null; if(panelMode==='entry')closePanel(); renderTable(); }
 function removeTag(id,tag){ const e=entries.find(x=>x.id===id); if(!e)return; e.tags=e.tags.filter(t=>t!==tag); renderTable(); }
 
+/* ── Line-item inline editors: description, category/code picker, matter selector ── */
+let catPickerFor=null, matterPickerFor=null;
+const CODE_LIST=[
+  ['Case research',''],['Document Review',''],['Correspondence',''],['Consultation',''],['Consultation Call',''],['Conference with client',''],['Conference Call',''],['Internal Conference',''],['Negotiation',''],['Contract Drafting',''],['Drafting Demand Letter',''],['Draft court documents',''],['Drafting (Correspondence)',''],['Drafting (Forms)',''],['Case Strategy',''],['Appearance in court',''],['Court Work',''],['Business Development Time',''],
+  ['A101','Plan and prepare for'],['A102','Research'],['A103','Draft/revise'],['A104','Review/analyze'],['A105','Communicate (in firm)'],['A106','Communicate (with client)'],['A107','Communicate (other outside counsel)'],['A108','Communicate (other external)'],['A109','Appear for/attend'],['A110','Manage data/files'],['A111','Other'],
+  ['L110','Fact Investigation/Development'],['L120','Analysis/Strategy'],['L130','Experts/Consultants'],['L140','Document/File Management'],['L160','Settlement/Non-Binding ADR'],['L210','Pleadings'],['L240','Dispositive Motions'],['L250','Other Written Motions and Submissions'],['L310','Written Discovery'],['L320','Document Production'],['L330','Depositions'],['L350','Discovery Motions'],['L450','Trial and Hearing Attendance']
+];
+function saveDesc(id,el){ const e=entries.find(x=>x.id===id); if(e){ const v=el.textContent.trim(); if(v) e.description=v; else el.textContent=e.description; } }
+function openMatterPicker(id,e){ if(e) e.stopPropagation(); matterPickerFor=(matterPickerFor===id?null:id); catPickerFor=null; renderTable(); }
+function openCatPicker(id,e){ if(e) e.stopPropagation(); catPickerFor=(catPickerFor===id?null:id); matterPickerFor=null; renderTable(); }
+function setMatter(e,id,key){ if(e) e.stopPropagation(); const en=entries.find(x=>x.id===id); if(en){ const M=MATTERS[key]; en.matter=key; en.client=M.client; en.rate=M.rate; en.billable=Math.round(en.hours*M.rate); en.nonBillable=false; if(en.billReady===null) en.billReady=false; } matterPickerFor=null; renderTable(); }
+function addCode(e,id,code){ if(e) e.stopPropagation(); const en=entries.find(x=>x.id===id); if(en && !en.tags.includes(code)) en.tags.push(code); catPickerFor=null; renderTable(); }
+function filterCatList(inp){ const q=inp.value.trim().toLowerCase(); inp.closest('.li-pop').querySelectorAll('.cat-opt').forEach(b=>{ b.style.display = b.textContent.toLowerCase().includes(q) ? 'flex' : 'none'; }); }
+function matterPopHTML(id){
+  const rows=Object.keys(MATTERS).map(k=>`<button type="button" class="li-opt" onclick="setMatter(event,${id},'${k}')"><span class="l1"><b>${k}</b></span><span class="l2">${MATTERS[k].client}</span></button>`).join('');
+  return `<div class="li-pop matter" onclick="event.stopPropagation()">${rows}</div>`;
+}
+function catPopHTML(id){
+  const opts=CODE_LIST.map(c=>`<button type="button" class="cat-opt" onclick="addCode(event,${id},'${c[0].replace(/'/g,"\\'")}')"><span class="code">${c[0]}</span>${c[1]?'<span class="name">'+c[1]+'</span>':''}</button>`).join('');
+  return `<div class="li-pop cat" onclick="event.stopPropagation()"><div class="cat-search"><div class="box">${svgLucide('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',14)}<input type="text" autocomplete="off" placeholder="Find activity category or UTBMS code" oninput="filterCatList(this)"></div></div><div class="cat-list">${opts}</div></div>`;
+}
+document.addEventListener('click',e=>{ if((catPickerFor!==null||matterPickerFor!==null) && !e.target.closest('.li-pop') && !e.target.closest('.add-cat') && !e.target.closest('.c-matter')){ catPickerFor=null; matterPickerFor=null; renderTable(); } });
+
 function updateSummaryCards(){
   const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const th=entries.reduce((s,e)=>s+e.hours,0), tb=entries.reduce((s,e)=>s+(e.billable||0),0);
   const br=entries.filter(e=>e.billReady===true), brh=br.reduce((s,e)=>s+e.hours,0), brb=br.reduce((s,e)=>s+(e.billable||0),0);
+  const dr=entries.filter(e=>e.billReady===false), drh=dr.reduce((s,e)=>s+e.hours,0), drb=dr.reduce((s,e)=>s+(e.billable||0),0);
   document.getElementById('all-hours').textContent=th.toFixed(1)+'h';
   document.getElementById('all-meta').innerHTML=`<b>Billable</b> $${fmt(tb)} • ${entries.length} entries`;
-  document.getElementById('draft-hours').textContent=th.toFixed(1)+'h';
-  document.getElementById('draft-meta').innerHTML=`<b>Billable</b> $${fmt(tb)} • ${entries.length} entries`;
+  document.getElementById('draft-hours').textContent=drh.toFixed(1)+'h';
+  document.getElementById('draft-meta').innerHTML=`<b>Billable</b> $${fmt(drb)} • ${dr.length} entries`;
   document.getElementById('billready-hours').textContent=brh.toFixed(1)+'h';
   document.getElementById('billready-meta').innerHTML=`<b>Billable</b> $${fmt(brb)} • ${br.length} entries`;
 }
 
-function selectCard(w){ ['all','draft','billready'].forEach(k=>document.getElementById('card-'+k).classList.toggle('selected',k===w)); }
+function selectCard(w){ cardFilter=w; ['all','draft','billready'].forEach(k=>document.getElementById('card-'+k).classList.toggle('selected',k===w)); renderTable(); }
 function switchTab(el){ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
 
 /* ═══ PANEL ═══ */
@@ -875,13 +1167,21 @@ function switchModalTab(tab){
     c.innerHTML=`
       <div class="s-sec"><div class="s-block">
         <p class="s-p" style="width:100%">Add up to 5 examples of how you write time entry descriptions. Clio Timekeeping will use these as a guide to match your tone and style.</p>
-        <p style="font-size:14px;font-weight:700;color:#1e2635;letter-spacing:-0.07px;margin-top:8px">Description examples</p>
-        <textarea class="writing-area" id="exArea" placeholder="Example: Drafted and revised indemnification and limitation of liability provisions in master services agreement."></textarea>
-        <button class="add-ex" onclick="addExample()">${svgLucide(ICON_PLUS,12)} Add another example</button>
+        <p style="font-size:14px;font-weight:500;color:#1e2635;letter-spacing:-0.14px;margin-top:6px">Description examples</p>
+        <div class="ex-list" id="exList">
+          <textarea class="writing-area" rows="2" placeholder="Example: Drafted and revised indemnification and limitation of liability provisions in master services agreement."></textarea>
+        </div>
+        <button class="add-ex" id="addExBtn" onclick="addExample()"><span>Add another example</span></button>
       </div></div>`;
   }
 }
-function addExample(){ const a=document.getElementById('exArea'); if(!a)return; const n=document.createElement('textarea'); n.className='writing-area'; n.style.marginTop='8px'; n.placeholder='Add another example...'; a.parentNode.insertBefore(n,a.parentNode.querySelector('.add-ex')); }
+function addExample(){
+  const list=document.getElementById('exList'); if(!list)return;
+  if(list.querySelectorAll('textarea').length>=5) return;
+  const n=document.createElement('textarea'); n.className='writing-area'; n.rows=2; n.placeholder='Add another example...';
+  list.appendChild(n); n.focus();
+  if(list.querySelectorAll('textarea').length>=5){ const b=document.getElementById('addExBtn'); if(b) b.style.display='none'; }
+}
 
 /* ═══ DROPDOWN ═══ */
 const gd=document.getElementById('gearDropdown'), gb=document.getElementById('gearBtn');
@@ -903,8 +1203,9 @@ function loadDay(date){
   current=new Date(date.getFullYear(),date.getMonth(),date.getDate());
   const wd=current.getDay();
   // reset transient UI state on day change
-  selectedRow=null; calOpen=false; tlFilterOpen=false; entriesFilterOpen=false;
-  fMatter=''; fBillable='all'; fCategory=''; tlMinDur=0; tlKeyword=''; tlTab='all';
+  selectedRow=null; calOpen=false; tlFilterOpen=false; entriesFilterOpen=false; selectedIds.clear();
+  fMatter=''; fBillable='all'; fCategory=''; cardFilter='all'; tlMinDur=0; tlKeyword=''; tlTab='all';
+  ['all','draft','billready'].forEach(k=>{ const el=document.getElementById('card-'+k); if(el) el.classList.toggle('selected',k==='all'); });
   if(wd===0||wd===6){ entries=[]; ALL_TIMELINE=[]; ENTRY_DETAILS={}; MATTER_LIST=[]; }
   else {
     entries=buildEntries(WEEK[wd]);
